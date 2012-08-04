@@ -1,3 +1,0 @@
-#!/bin/sh
-
-/home/Play21/play -Dconfig.file=conf/application_ai_server.conf

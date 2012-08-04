@@ -1,0 +1,13 @@
+#!/bin/sh
+. bin/lilarc
+
+RSYNC_OPTIONS=" \
+--archive \
+--force \
+--delete \
+--progress \
+--compress \
+--checksum \
+--exclude-from=bin/prod/rsync_exclude";
+
+rsync $RSYNC_OPTIONS ./ $REMOTE:$REMOTE_DIR

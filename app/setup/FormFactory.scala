@@ -19,6 +19,9 @@ final class FormFactory(
   def ai(ctx: Context) = Form(
     mapping(
       "variant" -> variant,
+      "clock" -> clock,
+      "time" -> time,
+      "increment" -> increment,
       "level" -> level,
       "color" -> color
     )(AiConfig.<<)(_.>>)
@@ -60,7 +63,9 @@ final class FormFactory(
       "mode" -> mode(ctx.isAuth),
       "eloRange" -> eloRange,
       "color" -> nonEmptyText.verifying(Color.names contains _)
-    )(HookConfig.<<)(_.>>) verifying ("Invalid clock", _.validClock)
+    )(HookConfig.<<)(_.>>)
+      .verifying("Invalid clock", _.validClock)
+      .verifying("Can't create rated unlimited in lobby", _.noRatedUnlimited)
   )
 
   def hookConfig(implicit ctx: Context): IO[HookConfig] = ctx.me.fold(
