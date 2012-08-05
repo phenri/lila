@@ -18,7 +18,7 @@ object Game extends LilaController {
 
   val maxPage = 40
 
-  val realtime = Open { implicit ctx ⇒
+  def realtime() = Open { implicit ctx ⇒
     IOk(gameRepo recentGames 9 map { games ⇒
       html.game.realtime(games, makeListMenu)
     })

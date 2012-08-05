@@ -12,6 +12,7 @@ trait Resolvers {
   val guice = "guice-maven" at "http://guice-maven.googlecode.com/svn/trunk"
   val jgitMaven = "jgit-maven" at "http://download.eclipse.org/jgit/maven"
   val christophs = "Christophs Maven Repo" at "http://maven.henkelmann.eu/"
+  val teamon = "teamon.eu repo" at "http://repo.teamon.eu"
 }
 
 trait Dependencies {
@@ -32,6 +33,7 @@ trait Dependencies {
   val actuarius = "eu.henkelmann" %% "actuarius" % "0.2.3"
   val jodaTime = "joda-time" % "joda-time" % "2.1"
   val jodaConvert = "org.joda" % "joda-convert" % "1.2"
+  val navigator = "eu.teamon" %% "play-navigator" % "0.3.1"
 }
 
 object ApplicationBuild extends Build with Resolvers with Dependencies {
@@ -40,7 +42,7 @@ object ApplicationBuild extends Build with Resolvers with Dependencies {
     organization := "com.github.ornicar",
     version := "1.2",
     scalaVersion := "2.9.1",
-    resolvers := Seq(iliaz, codahale, sonatype, sonatypeS, typesafe, t2v, guice, jgitMaven, christophs),
+    resolvers := Seq(iliaz, codahale, sonatype, sonatypeS, typesafe, t2v, guice, jgitMaven, christophs, teamon),
     libraryDependencies := Seq(scalaz, scalalib, hasher),
     libraryDependencies in test := Seq(specs2),
     shellPrompt := {
@@ -60,7 +62,8 @@ object ApplicationBuild extends Build with Resolvers with Dependencies {
       paginatorSalat,
       csv,
       jgit,
-      actuarius),
+      actuarius,
+      navigator),
     templatesImport ++= Seq(
       "lila.game.{ DbGame, DbPlayer, Pov }",
       "lila.user.User",

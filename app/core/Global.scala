@@ -24,15 +24,18 @@ object Global extends GlobalSettings {
 
   override def onRouteRequest(req: RequestHeader): Option[Handler] =
     if (env.ai.isServer) {
-      if (req.path startsWith "/ai/") super.onRouteRequest(req)
+      if (req.path startsWith "/ai/") onRouteRequestNav(req)
       else Action(NotFound).some
     }
     else {
       env.monitor.rpsProvider.countRequest()
       env.security.firewall.requestHandler(req) orElse
         env.i18n.requestHandler(req) orElse
-        super.onRouteRequest(req)
+        onRouteRequestNav(req)
     }
+
+  private def onRouteRequestNav(req: RequestHeader) = 
+    controllers.nav.onRouteRequest(req) orElse super.onRouteRequest(req)
 
   override def onHandlerNotFound(req: RequestHeader): Result =
     env.ai.isServer.fold(NotFound, controllers.Lobby handleNotFound req)
