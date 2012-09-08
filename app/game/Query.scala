@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 
 object Query {
-  
+
   val all = DBObject()
 
   val rated: DBObject = DBObject("isRated" -> true)
@@ -52,6 +52,12 @@ object Query {
   def opponents(u1: User, u2: User) = "userIds" $all List(u1.id, u2.id)
 
   def turnsGt(nb: Int) = "turns" $gt nb
+
+  def createdAtRange(from: DateTime, to: DateTime) = DBObject(
+    "createdAt" -> DBObject("$gte" -> midnight(from).toDate, "$lt" -> midnight(to).toDate)
+  )
+
+  private def midnight(date: DateTime) = date.withTime(0,0,0,0)
 
   val sortCreated = DBObject("createdAt" -> -1)
 

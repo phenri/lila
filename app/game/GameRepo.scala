@@ -12,6 +12,7 @@ import com.novus.salat._
 import com.novus.salat.dao._
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.query.Imports._
+import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 import java.util.Date
@@ -191,6 +192,31 @@ class GameRepo(collection: MongoCollection)
     val to = from + 1.day
     count(("createdAt" $gte from $lt to))
   }).sequence
+
+  def averageElo(from: DateTime, to: DateTime) = io {
+    val result = collection.mapReduce(
+      mapFunction = """function() {
+  var av = 0, nb = 0;
+  this.players.forEach(function(p) {
+    if (p.elo) {
+      av += p.elo;
+      ++nb;
+    }
+  });
+  if (nb > 0) emit("a", av / nb);
+}""",
+      reduceFunction = """function(key, values) {
+  var sum = 0;
+  for(var i in values) { sum += values[i]; }
+  return sum / values.length;
+}""",
+      output = MapReduceInlineOutput,
+      query = Query.createdAtRange(from, to).some)
+    (for {
+      row ← result.hasNext option result.next
+      sum ← row.getAs[Double]("value")
+    } yield sum.toInt) | 0
+  }
 
   private def idSelector(game: DbGame): DBObject = idSelector(game.id)
   private def idSelector(id: String): DBObject = DBObject("_id" -> id)
