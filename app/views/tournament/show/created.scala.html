@@ -1,0 +1,6 @@
+@(tournament: lila.tournament.Tournament)(implicit ctx: Context)
+
+@tournament.layout(
+title = tournament.showClock + " tournament #" + tournament.id) {
+  <h1>@tournament.showClock</h1>
+}

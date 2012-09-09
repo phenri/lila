@@ -16,6 +16,14 @@ title = "New tournament") {
       </td>
     </tr>
     <tr>
+      <th>
+        <label for="@form("minPlayers").id">Minimum players</label>
+      </th>
+      <td>
+        @base.select(form("minPlayers"), Tournament.minPlayers)
+      </td>
+    </tr>
+    <tr>
       <th></th>
       <td>
         <input type="submit" class="submit" value="Create the tournament" />

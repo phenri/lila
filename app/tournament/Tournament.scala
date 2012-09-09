@@ -7,24 +7,32 @@ import com.novus.salat.annotations.Key
 import ornicar.scalalib.OrnicarRandom
 
 case class Tournament(
-    @Key("_id") id: String = OrnicarRandom nextString 8,
+    @Key("_id") id: String,
     createdBy: String,
     startsAt: DateTime,
     minutes: Int,
     finished: Boolean = false,
     createdAt: DateTime = DateTime.now,
-    users: List[String] = Nil) {
+    players: List[String] = Nil) {
 
   lazy val duration = new Duration(minutes * 60 * 1000)
 
   lazy val endsAt = DateTime.now + duration
+
+  def started = startsAt >= DateTime.now
+  def ended = endsAt < DateTime.now
+
+  def status = finished.fold(Status.Finished, started.fold(Status.Started, Status.Created))
+
+  def showClock = "1 + 0"
 }
 
 object Tournament {
-  
-  import lila.core.Form._
 
-  val minutes = 5 to 30 by 5
-  val minuteDefault = 10
-  val minuteChoices = options(minutes, "%d minute{s}")
+  def apply(hook: Hook): Tournament = new Tournament(
+    id = hook.id,
+    createdBy = hook.createdBy,
+    startsAt = DateTime.now,
+    minutes = hook.minutes,
+    players = hook.players)
 }

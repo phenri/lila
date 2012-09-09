@@ -9,18 +9,18 @@ import scalaz.effects._
 import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 
-class TournamentRepo(collection: MongoCollection)
-    extends SalatDAO[Tournament, String](collection) {
+class HookRepo(collection: MongoCollection)
+    extends SalatDAO[Hook, String](collection) {
 
-  def byId(id: String): IO[Option[Tournament]] = io {
+  def byId(id: String): IO[Option[Hook]] = io {
     findOneById(id)
   }
 
-  def saveIO(tournament: Tournament): IO[Unit] = io {
-    save(tournament)
+  def saveIO(hook: Hook): IO[Unit] = io {
+    save(hook)
   }
 
-  val lastTournament: IO[Option[Tournament]] = io {
+  val lastHook: IO[Option[Hook]] = io {
     find(DBObject()).sort(sortCreated).limit(1).toList.headOption
   }
 

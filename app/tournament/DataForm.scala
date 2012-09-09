@@ -9,10 +9,12 @@ final class DataForm {
 
   import lila.core.Form._
 
-  val create = Form(mapping(
-    "minutes" -> numberIn(Tournament.minuteChoices)
-  )(TournamentSetup.apply)(TournamentSetup.unapply)) fill TournamentSetup()
+  val hook = Form(mapping(
+    "minutes" -> numberIn(Tournament.minuteChoices),
+    "minPlayers" -> numberIn(Tournament.minPlayerChoices)
+  )(HookSetup.apply)(HookSetup.unapply)) fill HookSetup()
 }
 
-case class TournamentSetup(
-  minutes: Int = Tournament.minuteDefault)
+case class HookSetup(
+  minutes: Int = Hook.minuteDefault,
+  minPlayers: Int = Hook.minPlayerDefault)

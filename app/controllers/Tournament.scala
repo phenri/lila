@@ -20,7 +20,13 @@ object Tournament extends LilaController {
   }
 
   def show(id: String) = Open { implicit ctx ⇒
-    Ok(id)
+    IOptionOk(repo byId id) { tournament ⇒
+      tournament.status match {
+        case Status.Created  ⇒ html.tournament.show.created(tournament)
+        case Status.Started  ⇒ html.tournament.show.started(tournament)
+        case Status.Finished ⇒ html.tournament.show.finished(tournament)
+      }
+    }
   }
 
   def form = Auth { implicit ctx ⇒
@@ -32,10 +38,10 @@ object Tournament extends LilaController {
     implicit me ⇒
       IOResult {
         implicit val req = ctx.body
-        forms.create.bindFromRequest.fold(
+        forms.hook.bindFromRequest.fold(
           err ⇒ io(BadRequest(html.message.form(err))),
-          data ⇒ api.makeTournament(data, me).map(tournament ⇒
-            Redirect(routes.Tournament.show(tournament.id))
+          setup ⇒ api.makeHook(setup, me).map(hook ⇒
+            Redirect(routes.Tournament.home)
           ))
       }
   }
