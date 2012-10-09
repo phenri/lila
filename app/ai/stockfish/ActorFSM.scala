@@ -6,7 +6,6 @@ import model.analyse._
 
 import akka.actor.{ Props, Actor, ActorRef, FSM ⇒ AkkaFSM, LoggingFSM }
 import akka.util.duration._
-import scalaz.effects._
 
 final class ActorFSM(
   processBuilder: Process.Builder,
@@ -47,9 +46,7 @@ final class ActorFSM(
   when(IsReady) {
     case Event(Out("readyok"), doing: Doing) ⇒ {
       val lines = config go doing.current
-      if (nowSeconds % 20 != 0) {
-        lines foreach process.write
-      }
+      lines foreach process.write
       goto(Running)
     }
   }
