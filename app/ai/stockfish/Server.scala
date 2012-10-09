@@ -18,20 +18,18 @@ import play.api.Play.current
 import play.api.libs.concurrent._
 import scalaz.effects._
 
-final class Server(
-    execPath: String,
-    config: Config) {
+final class Server(execPath: String, config: Config) {
 
   def play(pgn: String, initialFen: Option[String], level: Int): Future[Valid[String]] = {
     implicit val timeout = new Timeout(playAtMost)
     (for {
-      moves ← UciDump(pgn, initialFen)
+      moves ← UciDump(pgn, initialFen) 
       play = model.play.Task.Builder(moves, initialFen map chess960Fen, level)
     } yield play).fold(
       err ⇒ Future(failure(err)),
       play ⇒ actor ? play mapTo bestMoveManifest map { m ⇒
         success(m.move | "")
-      } onFailure reboot
+      } 
     )
   }
 
@@ -41,7 +39,7 @@ final class Server(
       moves ⇒ {
         val analyse = model.analyse.Task.Builder(moves, initialFen map chess960Fen)
         implicit val timeout = Timeout(analyseAtMost)
-        actor ? analyse mapTo analysisManifest onFailure reboot
+        actor ? analyse mapTo analysisManifest 
       }
     )
 
@@ -60,20 +58,19 @@ final class Server(
     } map {
       case (pos, piece) ⇒ piece.color.fold(pos.file.toUpperCase, pos.file)
     } mkString ""),
-    fen)
+    fen
+  )
 
-  private val reboot: PartialFunction[Throwable, Unit] = {
-    case e: AskTimeoutException ⇒ actor ! model.RebootException
-  }
   private val analysisManifest = manifest[Valid[Analysis]]
   private val bestMoveManifest = manifest[model.play.BestMove]
 
   private implicit val executor = Akka.system.dispatcher
 
-  private val playAtMost = 20 seconds
+  private val playAtMost = 10 seconds
   private val analyseAtMost = 20 minutes
 
   private lazy val process = Process(execPath, "StockFish") _
   private lazy val actor = Akka.system.actorOf(Props(
-   new ActorFSM(process, config)))
+    new ActorFSM(process, config)
+  ))
 }

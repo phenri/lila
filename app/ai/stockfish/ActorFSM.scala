@@ -5,6 +5,7 @@ import model._
 import model.analyse._
 
 import akka.actor.{ Props, Actor, ActorRef, FSM ⇒ AkkaFSM, LoggingFSM }
+import akka.util.duration._
 import scalaz.effects._
 
 final class ActorFSM(
@@ -38,17 +39,21 @@ final class ActorFSM(
       stay using (data enqueue task(sender))
   }
   when(Idle) {
-    case Event(Out(t), _) ⇒ { log.warning(t); stay }
+    case Event(Out(t), data) ⇒ {
+      log.warning("[%s] %s".format(data.size, t));
+      stay
+    }
   }
   when(IsReady) {
     case Event(Out("readyok"), doing: Doing) ⇒ {
-      val lines = config go doing.current 
-      lines.lastOption foreach display(doing.name)
-      lines foreach process.write
+      val lines = config go doing.current
+      if (nowSeconds % 20 != 0) {
+        lines foreach process.write
+      }
       goto(Running)
     }
   }
-  when(Running) {
+  when(Running, stateTimeout = 1 second) {
     case Event(Out(t), doing: Doing) if t startsWith "info depth" ⇒
       stay using (doing map (_.right map (_ buffer t)))
     case Event(Out(t), doing: Doing) if t startsWith "bestmove" ⇒
@@ -71,13 +76,22 @@ final class ActorFSM(
           )
         )
       )
+    case Event(StateTimeout, doing: Doing) => {
+      log.warning("ActorFSM state timeout")
+      nextTask(doing.done)
+    }
   }
   whenUnhandled {
-    case Event(task: analyse.Task.Builder, data) ⇒ nextTask(data enqueue task(sender))
-    case Event(task: play.Task.Builder, data)    ⇒ nextTask(data enqueue task(sender))
+    case Event(task: analyse.Task.Builder, data) ⇒ {
+      display(data)(task.toString)
+      nextTask(data enqueue task(sender))
+    }
+    case Event(task: play.Task.Builder, data)    ⇒ {
+      display(data)(task.toString)
+      nextTask(data enqueue task(sender))
+    }
     case Event(Out(t), _)                        ⇒ stay
     case Event(GetQueueSize, data)               ⇒ sender ! QueueSize(data.size); stay
-    case Event(e @ RebootException, _)           ⇒ throw e
   }
 
   def nextTask(data: Data) = data.fold(
@@ -91,8 +105,8 @@ final class ActorFSM(
     doing ⇒ stay using doing
   )
 
-  private def display(name: String)(msg: String) {
-    println("[%s] %s".format(name, msg))
+  private def display(data: Data)(msg: String) {
+    println("[ActorFSM](%d) %s".format(data.size, msg))
   }
 
   override def postStop() {

@@ -37,7 +37,6 @@ object model {
     def fold[A](todo: Todo ⇒ A, doing: Doing ⇒ A): A = doing(this)
     def enqueue(task: Task) = copy(queue = queue :+ task)
     def map(f: Task ⇒ Task): Doing = copy(current = f(current))
-    def name = current.fold(_ ⇒ "SFP", _ ⇒ "SFA")
   }
 
   object play {
@@ -53,6 +52,7 @@ object model {
     object Task {
       case class Builder(moves: String, fen: Option[String], level: Int) {
         def apply(sender: ActorRef) = new Task(moves, fen, level, sender)
+        override def toString = "play level " + level
       }
     }
 
@@ -88,6 +88,7 @@ object model {
           analysis = Analysis.builder,
           infoBuffer = Nil,
           sender)
+        override def toString = "analyse"
       }
     }
   }
@@ -104,6 +105,4 @@ object model {
 
   case object GetQueueSize
   case class QueueSize(i: Int)
-
-  case object RebootException extends RuntimeException("The actor timed out")
 }
