@@ -6,15 +6,9 @@ import scala.annotation.tailrec
 object PgnBinary {
 
   def encode(pgn: String): Array[Byte] = {
-    // val ints = pgnToInts(pgn).pp
-    // val bools = ints flatMap intToBools
-    // val byteBools = (bools grouped 8).toList
-    // println(byteBools map showBools)
-    val hugeInt = pgnToInt(pgn).pp
-    // val bytes = ints grouped 4 map { 
-    //   case Nil => 0
-    //   case a :: Nil => a
-    //   case a :: b :: Nil => a + 32 
+    val ints = pgnToInts(pgn).pp
+    val bools = ints flatMap intToBools
+    println(byteBools map showBools)
     Array.empty
   }
 
@@ -43,11 +37,10 @@ object PgnBinary {
   }
 
   // assumes i < 32
-  private def intToBools(i: Int): List[Boolean] = {
-    List(16, 8, 4, 2, 1) map (m ⇒ (i & m) > 0) 
+  def intToBools(i: Int): List[Boolean] = { List(16, 8, 4, 2, 1) map (m ⇒ (i & m) > 0) 
   } ~ { bs => println(showBools(bs)) }
 
-  private def showBools(bs: List[Boolean]) = bs map (_.fold("#", ".")) mkString ""
+  def showBools(bs: List[Boolean]) = bs map (_.fold("#", ".")) mkString ""
 
   private val symbols: List[String] = " " :: {
     ('a' to 'h').map(_.toString) ++
