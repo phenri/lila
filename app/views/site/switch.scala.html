@@ -1,0 +1,17 @@
+@()
+
+<html>
+  <head>
+    @cssTag("switch.css")
+  </head>
+  <body>
+    <div id="frames">
+      <iframe class="frame1" src="@routes.Lobby.home()"></iframe>
+      <iframe class="frame2" src="@routes.Lobby.home()"></iframe>
+    </div>
+    <div id="side">
+    </div>
+  </body>
+  @jsTag("vendor/jquery.min.js")
+  @jsTag("switch.js")
+</html>

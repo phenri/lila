@@ -26,6 +26,10 @@ object Main extends LilaController {
     )
   }
 
+  def switch = Open { implicit ctx =>
+    Ok(html.site.switch())
+  }
+
   def cli = OpenBody { implicit ctx ⇒
     implicit val req = ctx.body
     IOResult {

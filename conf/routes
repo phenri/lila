@@ -176,5 +176,8 @@ GET   /monitor/status                  controllers.Monitor.status
 
 POST  /cli                             controllers.Cli.command
 
+# Switch
+GET   /switch                          controllers.Main.switch
+
 # Assets
 GET   /assets/*file                    controllers.Assets.at(path="/public", file)
