@@ -60,6 +60,10 @@ final class CoreEnv private (application: Application, val settings: Settings) {
     getForumPosts = forum.recent.team,
     mongodb = mongodb.apply _)
 
+  lazy val ladder = new lila.ladder.LadderEnv(
+    settings = settings,
+    mongodb = mongodb.apply _)
+
   lazy val lobby = new lila.lobby.LobbyEnv(
     app = app,
     settings = settings,
