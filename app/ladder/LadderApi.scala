@@ -8,9 +8,10 @@ final class LadderApi(
     ladRepo: LadRepo) {
 
   val ladders: IO[List[LadderViewLite]] = ladderRepo.findAll.flatMap(_.map(ladder ⇒
-    for {
-      leader ← ladRepo ladderLeader ladder.id
-      nbLads ← ladRepo countByLadderId ladder.id
-    } yield LadderViewLite(ladder, leader, nbLads)
+    ladRepo ladderLeader ladder.id map { LadderViewLite(ladder, _) }
   ).sequence)
+
+  def ladder(id: String): IO[Option[LadderView]] = for {
+    ladder <- ladderRepo byId id
+  } yield LadderView(ladder)
 }

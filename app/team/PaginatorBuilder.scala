@@ -31,7 +31,7 @@ final class PaginatorBuilder(
       maxPerPage = mpp
     ) | paginator(adapter, 1, mpp)
 
-  final class TeamAdapter(team: Team) extends Adapter[MemberWithUser] {
+  private final class TeamAdapter(team: Team) extends Adapter[MemberWithUser] {
 
     val nbResults = team.nbMembers
 

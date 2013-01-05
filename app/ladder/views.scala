@@ -3,5 +3,8 @@ package ladder
 
 case class LadderViewLite(
   ladder: Ladder,
-  leader: Option[Lad],
-  nbLads: Int)
+  leader: Option[Lad])
+
+case class LadderView(
+  ladder: Ladder,
+  leader: Option[Lad])

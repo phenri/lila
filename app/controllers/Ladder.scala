@@ -15,9 +15,13 @@ object Ladder extends LilaController {
 
   val home = Open { implicit ctx ⇒
     IOk(api.ladders map { ladders ⇒
-      html.ladder.home(ladders)
+      html.ladder home ladders
     })
   }
 
-  def show(id: String) = TODO
+  def show(id: String) = Open { implicit ctx ⇒
+    IOptionIOk(api ladder id) { ladder ⇒
+      html.ladder show ladder
+    }
+  }
 }

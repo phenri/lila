@@ -1,6 +1,8 @@
 package lila
 package ladder
 
+import user.User
+
 import com.novus.salat.annotations.Key
 import org.joda.time.DateTime
 import ornicar.scalalib.Random
@@ -31,4 +33,9 @@ object Lad {
     pos = pos,
     hist = Nil
   ) addPos pos
+}
+
+case class LadWithUser(lad: Lad, user: User) {
+  def ladder = lad.ladder
+  def pos = lad.pos
 }
