@@ -33,11 +33,4 @@ object Ladder extends LilaController {
       case _       ⇒ notFound
     })
   }
-
-  def quit(id: String) = Auth { implicit ctx ⇒
-    implicit me ⇒ IOResult(api.quit(id, me) map {
-      case Some(l) ⇒ Redirect(routes.Ladder.show(l.id))
-      case _       ⇒ notFound
-    })
-  }
 }

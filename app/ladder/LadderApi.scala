@@ -36,14 +36,4 @@ final class LadderApi(
         io(None)
       )
     }
-
-  def quit(ladderId: String, user: User): IO[Option[Ladder]] = for {
-    ladderOption ← ladderRepo byId ladderId
-    _ ← ~ladderOption.map(doQuit(_, user.id))
-  } yield ladderOption
-
-  def doQuit(ladder: Ladder, userId: String): IO[Unit] =
-    belongsTo(ladder.id, userId) flatMap { joined ⇒
-      ladRepo.removeIO(ladder.id, userId) >> ladderRepo.incLads(ladder.id, -1) doIf joined
-    }
 }

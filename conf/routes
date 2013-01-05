@@ -56,7 +56,6 @@ GET   /tournament/faq                         controllers.Tournament.faq
 GET   /ladder                                 controllers.Ladder.home 
 GET   /ladder/:id                             controllers.Ladder.show(id: String, page: Int ?= 1) 
 POST  /ladder/:id/join                        controllers.Ladder.join(id: String)
-POST  /ladder/:id/quit                        controllers.Ladder.quit(id: String)
 
 # Team
 GET   /team                                   controllers.Team.home(page: Int ?= 1)
