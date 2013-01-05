@@ -134,6 +134,7 @@ final class Settings(config: Config, val IsDev: Boolean) {
 
   val LadderCollectionLadder = getString("ladder.collection.ladder")
   val LadderCollectionLad = getString("ladder.collection.lad")
+  val LadderPaginatorMaxPerPage = getInt("ladder.paginator.max_per_page")
 
   val BookmarkCollectionBookmark = getString("bookmark.collection.bookmark")
 

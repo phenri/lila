@@ -10,13 +10,11 @@ import org.joda.time.DateTime
 
 final class PaginatorBuilder(
     ladRepo: LadRepo,
-    ladderRepo: LadderRepo,
     userRepo: UserRepo,
-    maxPerPage: Int,
-    maxUserPerPage: Int) {
+    maxPerPage: Int) {
 
   def ladderLads(ladder: Ladder, page: Int): Paginator[LadWithUser] =
-    paginator(new LadAdapter(ladder), page, maxUserPerPage)
+    paginator(new LadAdapter(ladder), page, maxPerPage)
 
   private def paginator[A](adapter: Adapter[A], page: Int, mpp: Int): Paginator[A] =
     Paginator(

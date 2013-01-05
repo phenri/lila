@@ -1,4 +1,38 @@
-@(v: lila.ladder.LadderView, lads: Paginator[lila.ladder.Lad])(implicit ctx: Context)
+@(v: lila.ladder.LadderView, lads: Paginator[lila.ladder.LadWithUser], joined: Boolean)(implicit ctx: Context)
 
 @ladder.layout(title = v.ladder.name + " ladder") {
+<div class="content_box no_padding ladder_box">
+  <h1>@v.ladder.nameL</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          @if(joined) {
+          <form class="inline" action="@routes.Ladder.quit(v.ladder.id)" method="POST">
+            <input type="submit" class="submit button strong" value="Withdraw" />
+          </form>
+          } else {
+          <form class="inline" action="@routes.Ladder.join(v.ladder.id)" method="POST">
+            <input type="submit" class="submit button strong" value="Join ladder" />
+          </form>
+          }
+        </th>
+      </tr>
+    </thead>
+    <tbody class="infinitescroll">
+      @lads.nextPage.map { nextPage =>
+      <tr><th class="pager none">
+          <a href="@routes.Ladder.show(v.ladder.id, nextPage)">Next</a>
+      </th></tr>
+      }
+      @lads.currentPageResults.map { lad =>
+      <tr class="paginated_element">
+        <td>@lad.pos</td>
+        <td>@userLink(lad.user)</td>
+      </tr>
+      }
+    </tbody>
+  </tbody>
+</table>
+</div>
 }

@@ -3,7 +3,6 @@ package team
 
 import scalaz.effects._
 import org.scala_tools.time.Imports._
-import com.github.ornicar.paginator.Paginator
 
 import user.{ User, UserRepo }
 import http.Context
@@ -15,8 +14,7 @@ final class TeamApi(
     cached: Cached,
     userRepo: UserRepo,
     messenger: TeamMessenger,
-    makeForum: (String, String) ⇒ IO[Unit],
-    paginator: PaginatorBuilder) {
+    makeForum: (String, String) ⇒ IO[Unit]) {
 
   val creationPeriod = 1 week
 

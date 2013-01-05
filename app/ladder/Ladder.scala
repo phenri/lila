@@ -5,11 +5,12 @@ import com.novus.salat.annotations.Key
 import org.joda.time.DateTime
 
 case class Ladder(
-  @Key("_id") id: String, // also the url slug
-  name: String,
-  desc: String,
-  nbLads: Int,
-  nbGames: Int,
-  createdAt: DateTime) {
+    @Key("_id") id: String, // also the url slug
+    name: String,
+    desc: String,
+    nbLads: Int,
+    nbGames: Int,
+    createdAt: DateTime) {
 
+  def nameL = name + " ladder"
 }

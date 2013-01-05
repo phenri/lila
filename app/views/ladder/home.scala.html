@@ -8,7 +8,7 @@
     <a class="ladder" href="@routes.Ladder.show(v.ladder.id)">
       <h2>@v.ladder.name</h2>
       <span class="desc">@v.ladder.desc</span>
-      <span>Nb players: @v.nbLads</span>
+      <span>Nb players: @v.ladder.nbLads</span>
       <span>Leader: @userIdLink(v.leader map (_.user))</span>
     </a>
     }

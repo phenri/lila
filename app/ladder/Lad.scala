@@ -5,7 +5,6 @@ import user.User
 
 import com.novus.salat.annotations.Key
 import org.joda.time.DateTime
-import ornicar.scalalib.Random
 
 case class Lad(
     @Key("_id") id: String,
@@ -26,8 +25,10 @@ case class Lad(
 
 object Lad {
 
-  def apply(user: String, ladder: String, pos: Int): Lad = Lad(
-    id = Random nextString 8,
+  def makeId(ladder: String, user: String) = user + "@" + ladder
+
+  def apply(ladder: String, user: String, pos: Int): Lad = Lad(
+    id = makeId(ladder, user),
     user = user,
     ladder = ladder,
     pos = pos,

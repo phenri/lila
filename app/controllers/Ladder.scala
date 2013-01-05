@@ -19,9 +19,25 @@ object Ladder extends LilaController {
     })
   }
 
-  def show(id: String) = Open { implicit ctx ⇒
-    IOptionIOk(api ladder id) { ladder ⇒
-      html.ladder show ladder
+  def show(id: String, page: Int) = Open { implicit ctx ⇒
+    IOptionIOk(api ladder id) { view ⇒
+      ~ctx.me.map(u ⇒ api.belongsTo(view.ladder.id, u.id)) map { joined ⇒
+        html.ladder.show(view, api.lads(view.ladder, page), joined)
+      }
     }
+  }
+
+  def join(id: String) = Auth { implicit ctx ⇒
+    me ⇒ IOResult(api.join(id, me) map {
+      case Some(l) ⇒ Redirect(routes.Ladder.show(l.id))
+      case _       ⇒ notFound
+    })
+  }
+
+  def quit(id: String) = Auth { implicit ctx ⇒
+    implicit me ⇒ IOResult(api.quit(id, me) map {
+      case Some(l) ⇒ Redirect(routes.Ladder.show(l.id))
+      case _       ⇒ notFound
+    })
   }
 }

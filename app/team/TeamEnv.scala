@@ -46,8 +46,7 @@ final class TeamEnv(
     cached = cached,
     userRepo = userRepo,
     messenger = messenger,
-    makeForum = makeForum,
-    paginator = paginator)
+    makeForum = makeForum)
 
   lazy val teamInfo = TeamInfo(
     api = api,
