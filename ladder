@@ -1,0 +1,24 @@
+The goal of this competition is to climb up the Ladder, ultimately, to the top — #1 position. Naturally, you move up the Ladder by winning games. You can move several positions up when winning against someone above you (the higher the better!), or just one position up otherwise. However, it is only possible to challenge someone within 1/10th of the total Ladder ranks. Also, you can set the max number of Ladder games you wish to play simultaneously. Please see below for the complete rules.
+
+RULES
+-----
+
+        Chess Ladder is a form of competition where each player is assigned a position (rank). A lower number means higher rank on the ladder (better position).
+        The goal of the competition is to move up the Ladder, ultimately to the #1 position (highest rank). Players move up the Ladder (i.e. improve their rank) by winning Ladder games. Players move down the Ladder (i.e. lose their rank) when they lose Ladder games, and when other players move up the Ladder ahead of them.
+        To start a Ladder game, access the Ladder table via the link above and then click "Play!" next to the player you'd like to challenge.
+        Players can limit the max number of simultaneous Ladder games they are playing (but no less than 5 games). If the number of active Ladder games exceeds the player's limit, they cannot be challenged to a new Ladder game (temporarily), however they can still initiate a new Ladder challenge. Players with a vacation flag set for the their account cannot be challenged to a new Ladder game (temporarily).
+        After each Ladder game has ended, both players are assigned new positions on the Ladder, depending on their current positions, and the result of the game:
+            If the winning player has a lower rank than the losing player, they are moved up half the distance between their position and the losing player's position. The losing player is moved one position down. (For example, if the winning player was 10th and the losing player was 4th on the ladder, their new positions will be 7th ((10+4)/2) and 5th (4+1) after the game)
+            If the winning player is directly below the losing player, their positions are swapped. (i.e. the winning player is moved one position up, and the losing player — one position down)
+            If the winning player has the higher position, they are moved one position up and the losing player is moved one position down.
+            In case of a draw, the player with the lower position is moved up by one and the other player keeps their current position. If the players are next to each other in the ladder, their positions remain unchanged.
+            If one of the opponents is no longer participating in the Ladder at the time game ends, the other player is moved one position up in case of a win or one position down in case of a loss (position remains unchanged in case of a draw). 
+        A player can lose their rank (i.e. move down the Chess Ladder) between completing their games, due to other players moving up the ladder after winning their games (i.e. moving up in front of the player).
+        When joining a Ladder, the player is placed at the last position (i.e. lowest rank).
+        Players can only challenge other players on the Ladder if their positions are within 1/10th of the total Ladder ranks. (For example, if there are currently 730 players in the Ladder, you can only challenge players within 73 positions above/below your own)
+        Ladder challenges cannot be declined, and Ladder games cannot be cancelled.
+        When challenging another player to a Ladder game, the player who started the game will play Black, the defending player will play White.
+        Players are automatically removed from the Chess Ladder if they time out in 3 Ladder games within one month (to avoid further losses since ladder challenges cannot be declined).
+        If you retire from the Ladder, you will need to finish all your currently active ladder games, before you are able to re-join the Chess Ladder.
+        Only premium membership subscribers can participate in the Chess Ladder. 
+
