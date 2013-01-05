@@ -4,11 +4,11 @@ package ladder
 import com.novus.salat._
 import com.novus.salat.dao._
 import com.mongodb.casbah.MongoCollection
-import com.mongodb.casbah.query.Imports._
+import com.mongodb.casbah.Imports._
 import scalaz.effects._
 
 // db.lad.ensureIndex({user:1)
-// db.lad.ensureIndex({ladder:1, pos:-1})
+// db.lad.ensureIndex({ladder:1, pos:-1}, {unique: true})
 private[ladder] final class LadRepo(collection: MongoCollection)
     extends SalatDAO[Lad, String](collection) {
 
@@ -30,19 +30,17 @@ private[ladder] final class LadRepo(collection: MongoCollection)
 
   def lastPos(ladderId: String): IO[Int] = io {
     ~(collection.find(ladderIdQuery(ladderId), DBObject("pos" -> true))
-      .sort(sortQuery())
+      .sort(sortQuery(-1))
       .limit(1) map { obj ⇒
         obj.getAs[Int]("pos")
       }).flatten.toList.headOption
   } 
 
-  def insertIO(lad: Lad) = io { insert(lad) }
-
-  def removeIO(ladderId: String, userId: String) = io { remove(idQuery(ladderId, userId)) }
+  def insertIO(lad: Lad) = io { insert(lad, WriteConcern.Safe) }
 
   def ladderIdQuery(ladderId: String) = DBObject("ladder" -> ladderId)
   def userIdQuery(userId: String) = DBObject("user" -> userId)
   def idQuery(ladderId: String, userId: String) = DBObject("_id" -> id(ladderId, userId))
   def id(ladderId: String, userId: String) = Lad.makeId(ladderId, userId)
-  def sortQuery(order: Int = -1) = DBObject("pos" -> order)
+  def sortQuery(order: Int = 1) = DBObject("pos" -> order)
 }

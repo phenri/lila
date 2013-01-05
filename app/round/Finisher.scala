@@ -21,12 +21,13 @@ final class Finisher(
     eloCalculator: EloCalculator,
     finisherLock: FinisherLock,
     indexGame: DbGame ⇒ IO[Unit],
-    tournamentOrganizerActorName: String) {
+    actorNamesToNotify: List[String]) {
 
   type ValidIOEvents = Valid[IO[List[Event]]]
 
-  private lazy val tournamentOrganizerActor =
-    Akka.system.actorFor("/user/" + tournamentOrganizerActorName)
+  private lazy val actorsToNotify = actorNamesToNotify map { name ⇒
+    Akka.system.actorFor("/user/" + name)
+  }
 
   def abort(pov: Pov): ValidIOEvents =
     if (pov.game.abortable) finish(pov.game, Aborted)
@@ -61,20 +62,18 @@ final class Finisher(
     !!("no outoftime applicable " + game.clock.fold(_.remainingTimes, "-"))
   )
 
-  def outoftimes(games: List[DbGame]): List[IO[Unit]] =
-    games map { g ⇒
-      outoftime(g).fold(
-        msgs ⇒ putStrLn(g.id + " " + msgs.shows),
-        _ map (_ ⇒ Unit) // events are lost
-      ): IO[Unit]
-    }
+  def outoftimes(games: List[DbGame]): List[IO[Unit]] = games map { g ⇒
+    outoftime(g).fold(
+      msgs ⇒ putStrLn(g.id + " " + msgs.shows),
+      _ map (_ ⇒ Unit) // events are lost
+    ): IO[Unit]
+  }
 
-  def moveFinish(game: DbGame, color: Color): IO[List[Event]] =
-    (game.status match {
-      case Mate                        ⇒ finish(game, Mate, Some(color))
-      case status @ (Stalemate | Draw) ⇒ finish(game, status)
-      case _                           ⇒ success(io(Nil)): ValidIOEvents
-    }) | io(Nil)
+  def moveFinish(game: DbGame, color: Color): IO[List[Event]] = (game.status match {
+    case Mate                        ⇒ finish(game, Mate, Some(color))
+    case status @ (Stalemate | Draw) ⇒ finish(game, status)
+    case _                           ⇒ success(io(Nil)): ValidIOEvents
+  }) | io(Nil)
 
   private def finish(
     game: DbGame,
@@ -94,19 +93,16 @@ final class Finisher(
       winnerId = winner flatMap (g.player(_).userId)
       _ ← gameRepo.finish(g.id, winnerId)
       _ ← updateElo(g)
-      _ ← incNbGames(g, White) doIf (g.status >= Status.Mate)
-      _ ← incNbGames(g, Black) doIf (g.status >= Status.Mate)
+      _ ← incNbGames(g, White) >> incNbGames(g, Black) doIf (g.status >= Status.Mate)
       _ ← indexGame(g)
-      _ ← io { tournamentOrganizerActor ! FinishGame(g) }
+      _ ← io(actorsToNotify foreach { _ ! FinishGame(g) })
     } yield p2.events)
 
   private def incNbGames(game: DbGame, color: Color): IO[Unit] =
-    game.player(color).userId.fold(
+    ~game.player(color).userId.map(
       id ⇒ userRepo.incNbGames(id, game.rated, game.hasAi,
         result = game.wonBy(color).fold(_.fold(1, -1), 0).some filterNot (_ ⇒ game.hasAi || game.aborted)
-      ),
-      io()
-    )
+      ))
 
   private def updateElo(game: DbGame): IO[Unit] = ~{
     for {

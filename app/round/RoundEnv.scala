@@ -73,7 +73,7 @@ final class RoundEnv(
     eloCalculator = eloCalculator,
     finisherLock = finisherLock,
     indexGame = indexGame,
-    tournamentOrganizerActorName = ActorTournamentOrganizer)
+    actorNamesToNotify = List(ActorTournamentOrganizer, ActorLadderOrganizer))
 
   lazy val eloCalculator = new chess.EloCalculator(false)
 

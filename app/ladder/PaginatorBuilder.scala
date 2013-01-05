@@ -36,6 +36,6 @@ final class PaginatorBuilder(
     }
 
     private def query = ladRepo ladderIdQuery ladder.id
-    private def sort = ladRepo sortQuery -1
+    private def sort = ladRepo sortQuery 1
   }
 }

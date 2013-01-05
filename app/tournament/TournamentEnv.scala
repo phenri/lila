@@ -29,8 +29,9 @@ final class TournamentEnv(
     incToints: String ⇒ Int ⇒ IO[Unit],
     mongodb: String ⇒ MongoCollection) {
 
-  implicit val ctx = app
   import settings._
+
+  private implicit val ctx = app
 
   lazy val forms = new DataForm(IsDev)
 
@@ -47,7 +48,7 @@ final class TournamentEnv(
     roundMeddler = roundMeddler,
     incToints = incToints)
 
-  lazy val roomRepo = new RoomRepo(
+  private lazy val roomRepo = new RoomRepo(
     collection = mongodb(TournamentCollectionRoom)
   )
 
@@ -63,7 +64,7 @@ final class TournamentEnv(
     messenger = messenger,
     flood = flood)
 
-  lazy val history = () ⇒ new History(timeout = TournamentMessageLifetime)
+  private lazy val history = () ⇒ new History(timeout = TournamentMessageLifetime)
 
   lazy val hubMaster = Akka.system.actorOf(Props(new HubMaster(
     makeHistory = history,
@@ -79,7 +80,7 @@ final class TournamentEnv(
     hubMaster = hubMaster
   )), name = ActorTournamentOrganizer)
 
-  lazy val reminder = Akka.system.actorOf(Props(new Reminder(List(
+  private lazy val reminder = Akka.system.actorOf(Props(new Reminder(List(
     ActorLobbyHub, ActorSiteHub, ActorRoundHubMaster, ActorTournamentHubMaster
   ))), name = ActorTournamentReminder)
 

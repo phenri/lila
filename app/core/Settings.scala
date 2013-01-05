@@ -158,6 +158,7 @@ final class Settings(config: Config, val IsDev: Boolean) {
   val ActorTournamentOrganizer = "tournament_organizer"
   val ActorTournamentReminder = "tournament_reminder"
   val ActorTournamentRegister = "tournament_register"
+  val ActorLadderOrganizer = "ladder_organizer"
 
   val ModlogCollectionModlog = getString("modlog.collection.modlog")
 
