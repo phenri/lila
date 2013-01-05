@@ -64,7 +64,6 @@ case object ClockSync
 case class IsConnectedOnGame(gameId: String, color: Color)
 case class IsGone(gameId: String, color: Color)
 case class CloseGame(gameId: String)
-case class GetHub(gameId: String)
 case object HubTimeout
 case object GetNbHubs
 case class AnalysisAvailable(gameId: String)

@@ -1,6 +1,17 @@
 package lila
 package ladder
 
-private[ladder] case class Join(ladderId: String, userId: String)
+import socket.SocketMember
 
-private[ladder] case class Reorder(lad1: Lad, lad2: Lad)
+private[ladder] object ActorApi {
+
+  case class Member(
+    channel: JsChannel,
+    username: Option[String]) extends SocketMember
+
+  case class Join(ladderId: String, userId: String)
+
+  case class Reorder(lad1: Lad, lad2: Lad)
+
+  case object Reload
+}

@@ -135,6 +135,9 @@ final class Settings(config: Config, val IsDev: Boolean) {
   val LadderCollectionLadder = getString("ladder.collection.ladder")
   val LadderCollectionLad = getString("ladder.collection.lad")
   val LadderPaginatorMaxPerPage = getInt("ladder.paginator.max_per_page")
+  val LadderUidTimeout = millis("ladder.uid.timeout")
+  val LadderHubTimeout = millis("ladder.hub.timeout")
+  val LadderMessageLifetime = millis("ladder.message.lifetime")
 
   val BookmarkCollectionBookmark = getString("bookmark.collection.bookmark")
 
@@ -158,7 +161,7 @@ final class Settings(config: Config, val IsDev: Boolean) {
   val ActorTournamentOrganizer = "tournament_organizer"
   val ActorTournamentReminder = "tournament_reminder"
   val ActorTournamentRegister = "tournament_register"
-  val ActorLadderOrganizer = "ladder_organizer"
+  val ActorLadderHubMaster = "ladder_hub_master"
 
   val ModlogCollectionModlog = getString("modlog.collection.modlog")
 

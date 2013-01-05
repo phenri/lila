@@ -1,7 +1,7 @@
 package lila
 package tournament
 
-import socket.{ History, Broom, Close, GetNbMembers, GetUsernames, NbMembers, SendTo, SendTos, Fen }
+import socket.{ History, Broom, Close, GetHub, GetNbMembers, GetUsernames, NbMembers, SendTo, SendTos, Fen }
 
 import akka.actor._
 import akka.actor.ReceiveTimeout
@@ -19,10 +19,10 @@ final class HubMaster(
     uidTimeout: Int,
     hubTimeout: Int) extends Actor {
 
-  implicit val timeout = Timeout(1 second)
-  implicit val executor = Akka.system.dispatcher
+  private implicit val timeout = Timeout(1 second)
+  private implicit val executor = Akka.system.dispatcher
 
-  var hubs = Map.empty[String, ActorRef]
+  private var hubs = Map.empty[String, ActorRef]
 
   def receive = {
 

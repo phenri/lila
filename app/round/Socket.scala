@@ -16,7 +16,7 @@ import scalaz.{ Success, Failure }
 import game.{ Pov, PovRef }
 import user.User
 import chess.Color
-import socket.{ PingVersion, Quit, Resync }
+import socket.{ GetHub, PingVersion, Quit, Resync }
 import socket.Util.connectionFail
 import security.Flood
 import implicits.RichJs._
@@ -32,7 +32,7 @@ final class Socket(
     flood: Flood) {
 
   private val timeoutDuration = 1 second
-  implicit private val timeout = Timeout(timeoutDuration)
+  private implicit val timeout = Timeout(timeoutDuration)
 
   def blockingVersion(gameId: String): Int = Await.result(
     hubMaster ? GetGameVersion(gameId) mapTo manifest[Int],

@@ -1,7 +1,7 @@
 package lila
 package round
 
-import socket.{ Broom, Close, GetNbMembers, GetUsernames, NbMembers, SendTo, SendTos }
+import socket.{ Broom, Close, GetHub, GetNbMembers, GetUsernames, NbMembers, SendTo, SendTos }
 
 import akka.actor._
 import akka.actor.ReceiveTimeout

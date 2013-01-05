@@ -3,6 +3,7 @@ package ladder
 
 import user.UserRepo
 import core.Settings
+import socket.History
 
 import com.mongodb.casbah.MongoCollection
 import scalaz.effects._
@@ -24,7 +25,7 @@ final class LadderEnv(
     ladderRepo = ladderRepo,
     ladRepo = ladRepo,
     paginator = paginator,
-    organizer = organizer)
+    hubMaster = hubMaster)
 
   private lazy val ladderRepo = new LadderRepo(mongodb(LadderCollectionLadder))
   private lazy val ladRepo = new LadRepo(mongodb(LadderCollectionLad))
@@ -34,7 +35,12 @@ final class LadderEnv(
     userRepo = userRepo,
     maxPerPage = LadderPaginatorMaxPerPage)
 
-  private lazy val organizer = Akka.system.actorOf(Props(new Organizer(
-    ladRepo = ladRepo
-  )), name = ActorLadderOrganizer)
+  private lazy val history = () ⇒ new History(timeout = LadderMessageLifetime)
+
+  private lazy val hubMaster = Akka.system.actorOf(Props(new HubMaster(
+    ladRepo = ladRepo,
+    makeHistory = history,
+    uidTimeout = LadderUidTimeout,
+    hubTimeout = LadderHubTimeout
+  )), name = ActorLadderHubMaster)
 }
