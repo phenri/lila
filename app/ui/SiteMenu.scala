@@ -14,6 +14,7 @@ final class SiteMenu(trans: I18nKeys) {
   val play = new Elem("play", routes.Lobby.home, trans.play)
   val game = new Elem("game", routes.Game.realtime, trans.games)
   val tournament = new Elem("tournament", routes.Tournament.home, trans.tournament)
+  val ladder = new Elem("ladder", routes.Ladder.home, trans.ladder)
   val user = new Elem("user", routes.User.list(page = 1), trans.people)
   val team = new Elem("team", routes.Team.home(page = 1), trans.teams)
   val forum = new Elem("forum", routes.ForumCateg.index, trans.forum)

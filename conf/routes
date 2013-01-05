@@ -52,6 +52,9 @@ GET   /tournament/$id<[\w\-]{8}>/reload       controllers.Tournament.reload(id: 
 POST  /tournament/$id<[\w\-]{8}>/early-start  controllers.Tournament.earlyStart(id: String)
 GET   /tournament/faq                         controllers.Tournament.faq 
 
+# Ladder
+GET   /ladder                                 controllers.Ladder.home 
+
 # Team
 GET   /team                                   controllers.Team.home(page: Int ?= 1)
 GET   /team/new                               controllers.Team.form
