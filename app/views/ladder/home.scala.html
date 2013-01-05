@@ -1,0 +1,17 @@
+@(ladders: List[lila.ladder.LadderViewLite])(implicit ctx: Context)
+
+@tournament.layout(title = "Ladders") {
+<div class="content_box ladder_box no_padding">
+  <h1>Ladders</h1>
+  <div class="ladders">
+    @ladders.map { v =>
+    <a class="ladder" href="@routes.Ladder.show(v.ladder.id)">
+      <h2>@v.ladder.name</h2>
+      <span class="desc">@v.ladder.desc</span>
+      <span>Nb players: @v.nbLads</span>
+      <span>Leader: @userIdLink(v.leader map (_.user))</span>
+    </a>
+    }
+  </div>
+</div>
+}

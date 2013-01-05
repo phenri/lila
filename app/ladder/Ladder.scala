@@ -8,6 +8,7 @@ case class Ladder(
   @Key("_id") id: String, // also the url slug
   name: String,
   desc: String,
+  nbGames: Int,
   createdAt: DateTime) {
 
 }

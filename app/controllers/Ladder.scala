@@ -9,14 +9,15 @@ import play.api.libs.json._
 import play.api.libs.concurrent._
 import play.api.templates.Html
 
-object Tournament extends LilaController {
+object Ladder extends LilaController {
+
+  private def api = env.ladder.api
 
   val home = Open { implicit ctx ⇒
-    Async {
-      futureTournaments zip userRepo.sortedByToints(10).toFuture map {
-        case (((created, started), finished), leaderboard) ⇒
-          Ok(html.tournament.home(created, started, finished, leaderboard))
-      } asPromise
-    }
+    IOk(api.ladders map { ladders ⇒
+      html.ladder.home(ladders)
+    })
   }
+
+  def show(id: String) = TODO
 }

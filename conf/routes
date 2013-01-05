@@ -54,6 +54,7 @@ GET   /tournament/faq                         controllers.Tournament.faq
 
 # Ladder
 GET   /ladder                                 controllers.Ladder.home 
+GET   /ladder/:id                             controllers.Ladder.show(id: String) 
 
 # Team
 GET   /team                                   controllers.Team.home(page: Int ?= 1)

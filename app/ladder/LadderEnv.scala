@@ -12,5 +12,10 @@ final class LadderEnv(
 
   import settings._
 
-  lazy val ladderRepo = new LadderRepo(mongodb(LadderCollectionLadder))
+  private lazy val ladderRepo = new LadderRepo(mongodb(LadderCollectionLadder))
+  private lazy val ladRepo = new LadRepo(mongodb(LadderCollectionLad))
+
+  lazy val api = new LadderApi(
+    ladderRepo = ladderRepo,
+    ladRepo = ladRepo)
 }

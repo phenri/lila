@@ -133,6 +133,7 @@ final class Settings(config: Config, val IsDev: Boolean) {
   val TeamPaginatorMaxUserPerPage = getInt("team.paginator.max_user_per_page")
 
   val LadderCollectionLadder = getString("ladder.collection.ladder")
+  val LadderCollectionLad = getString("ladder.collection.lad")
 
   val BookmarkCollectionBookmark = getString("bookmark.collection.bookmark")
 

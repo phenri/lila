@@ -1,0 +1,13 @@
+@(title: String, goodies: Option[Html] = None)(body: Html)(implicit ctx: Context)
+
+@moreCss = {
+@cssTag("ladder.css")
+}
+
+@base.layout(
+title = title,
+moreCss = moreCss,
+goodies = goodies,
+active = siteMenu.ladder.some) {
+@body
+}

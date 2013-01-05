@@ -11,4 +11,6 @@ private[ladder] final class LadderRepo(collection: MongoCollection)
     extends SalatDAO[Ladder, String](collection) {
 
   def byId(id: String): IO[Option[Ladder]] = io { findOneById(id) }
+
+  def findAll = io { find(DBObject()).toList }
 }
