@@ -31,7 +31,7 @@ object Cron {
     }
 
     message(1 second) {
-      env.lobby.hub -> lobby.WithHooks(env.lobby.hookMemo.putAll)
+      env.lobby.hub -> lobby.PublicActorApi.WithHooks(env.lobby.hookMemo.putAll)
     }
 
     unsafe(2 seconds, "meta hub: refresh") {

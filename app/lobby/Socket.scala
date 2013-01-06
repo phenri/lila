@@ -10,6 +10,7 @@ import play.api.libs.iteratee._
 import play.api.libs.concurrent._
 import scalaz.effects._
 
+import ActorApi._
 import implicits.RichJs._
 import socket.{ Util, PingVersion, Quit, LiveGames }
 import timeline.Entry

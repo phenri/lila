@@ -1,6 +1,7 @@
 package lila
 package lobby
 
+import ActorApi._
 import socket._
 
 import akka.actor._
