@@ -4,6 +4,7 @@ package ladder
 import ActorApi._
 import game.DbGame
 import user.User
+import socket.GetHubVersion
 import core.Futuristic.futureToIo
 
 import scalaz.effects._
@@ -13,7 +14,10 @@ final class LadderApi(
     ladderRepo: LadderRepo,
     ladRepo: LadRepo,
     paginator: PaginatorBuilder,
-    hubMaster: ActorRef) {
+    socket: Socket,
+    hubMaster: ActorRef,
+    challengeRadius: Int,
+    onlineUsernames: () ⇒ Iterable[String]) {
 
   val ladders: IO[List[LadderViewLite]] = ladderRepo.findAll.flatMap(_.map(ladder ⇒
     ladRepo ladderLeader ladder.id map { LadderViewLite(ladder, _) }
@@ -28,9 +32,18 @@ final class LadderApi(
 
   def belongsTo(ladderId: String, userId: String): IO[Boolean] = ladRepo.exists(ladderId, userId)
 
+  def lad(ladderId: String, userId: String): IO[Option[Lad]] = ladRepo.findOne(ladderId, userId)
+
+  def challengers(ladder: Ladder, lad: Lad, page: Int) = paginator.challengers(
+    ladder,
+    lad.pos,
+    (ladder.nbLads * challengeRadius) / 100,
+    onlineUsernames(),
+    page)
+
   def join(ladderId: String, user: User): IO[Option[Ladder]] = ladderRepo byId ladderId flatMap {
     ~_.map(ladder ⇒ belongsTo(ladder.id, user.id) flatMap { joined ⇒
-      io(hubMaster ! Join(ladder.id, user.id)) >> ladderRepo.incLads(ladder.id, 1) doUnless joined
+      io(hubMaster ! JoinLadder(ladder.id, user.id)) >> ladderRepo.incLads(ladder.id, 1) doUnless joined
     } inject ladder.some)
   }
 
@@ -40,4 +53,9 @@ final class LadderApi(
       putStrLn(ladder.toString) inject ladder.some
     })
   } yield result
+
+  def ladderVersion(id: String): Int = socket blockingVersion id
+
+  def websocket(id: String, version: Option[Int], uid: Option[String], user: Option[User]) =
+    socket.join(id, version, uid, user)
 }

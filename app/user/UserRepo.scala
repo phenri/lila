@@ -244,6 +244,10 @@ class UserRepo(collection: MongoCollection)
     update(byIdQuery(user), obj)
   }
 
+  def findEnableds(nb: Int): IO[List[User]] = io {
+    find(enabledQuery).limit(nb).toList
+  }
+
   private def hash(pass: String, salt: String): String =
     "%s{%s}".format(pass, salt).sha1
 

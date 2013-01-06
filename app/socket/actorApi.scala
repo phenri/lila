@@ -27,6 +27,7 @@ case class Quit(uid: String)
 
 case object GetNbHubs
 case class GetHub(id: String)
+case class GetHubVersion(id: String)
 case class SendTo(userId: String, message: JsObject)
 case class SendTos(userIds: Set[String], message: JsObject)
 case class Fen(gameId: String, fen: String, lastMove: Option[String])

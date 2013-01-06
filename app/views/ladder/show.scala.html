@@ -1,36 +1,32 @@
-@(v: lila.ladder.LadderView, lads: Paginator[lila.ladder.LadWithUser], joined: Boolean)(implicit ctx: Context)
+@(v: lila.ladder.LadderView, lads: Paginator[lila.ladder.LadWithUser], challengers: Option[Paginator[lila.ladder.LadWithUser]], version: Int)(implicit ctx: Context)
 
-@ladder.layout(title = v.ladder.name + " ladder") {
-<div class="content_box no_padding ladder_box">
+@moreJs = {
+@jsTag("vendor/jquery.infinitescroll.min.js")
+}
+
+@ladder.layout(
+title = v.ladder.name + " ladder",
+moreJs = moreJs) {
+<div id="ladder"
+  data-socket-url="@routes.Ladder.websocket(v.ladder.id)"
+  class="content_box no_padding ladder_box">
   <h1>@v.ladder.nameL</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>
-          @if(ctx.isAuth && !joined) {
-          <form class="inline" action="@routes.Ladder.join(v.ladder.id)" method="POST">
-            <input type="submit" class="submit button strong" value="Join ladder" />
-          </form>
-          }
-        </th>
-      </tr>
-    </thead>
-    <tbody class="infinitescroll">
-      @lads.nextPage.map { nextPage =>
-      <tr><th class="pager none">
-          <a href="@routes.Ladder.show(v.ladder.id, nextPage)">Next</a>
-      </th></tr>
+  <div class="columns clearfix">
+    <div class="standing_wrap">
+      @ladder.standing(v, lads)
+    </div>
+    <div class="challengers_wrap">
+      @challengers.map { cs =>
+      @ladder.challengers(v, cs)
+      }.getOrElse {
+      @if(ctx.isAuth) {
+      <form class="inline" action="@routes.Ladder.join(v.ladder.id)" method="POST">
+        <input type="submit" class="submit button strong" value="Join ladder" />
+      </form>
       }
-      @lads.currentPageResults.map { lad =>
-      <tr class="paginated_element">
-        <td>@lad.pos</td>
-        <td>@userLink(lad.user)</td>
-      </tr>
       }
-    </tbody>
-  </table>
-  <h2>Challenge</h2>
-  <table>
-  </table>
+    </div>
+  </div>
 </div>
+@embedJs("var _ld_ = " + ladderJsData(v.ladder, version, ctx.me))
 }

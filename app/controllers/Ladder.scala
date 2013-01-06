@@ -2,6 +2,7 @@ package controllers
 
 import lila._
 import views._
+import ladder.{ Ladder ⇒ LadderModel }
 
 import scalaz.effects._
 import play.api.mvc._
@@ -21,9 +22,13 @@ object Ladder extends LilaController {
 
   def show(id: String, page: Int) = Open { implicit ctx ⇒
     IOptionIOk(api ladder id) { view ⇒
-      ~ctx.me.map(u ⇒ api.belongsTo(view.ladder.id, u.id)) map { joined ⇒
-        html.ladder.show(view, api.lads(view.ladder, page), joined)
-      }
+      for {
+        ladOption ← ~ctx.me.map(u ⇒ api.lad(view.ladder.id, u.id))
+      } yield html.ladder.show(
+        view,
+        api.lads(view.ladder, page),
+        ladOption.map(lad ⇒ api.challengers(view.ladder, lad, page)),
+        version(view.ladder))
     }
   }
 
@@ -33,4 +38,11 @@ object Ladder extends LilaController {
       case _       ⇒ notFound
     })
   }
+
+  def websocket(id: String) = WebSocket.async[JsValue] { req ⇒
+    implicit val ctx = reqToCtx(req)
+    api.websocket(id, getInt("version"), get("sri"), ctx.me).unsafePerformIO
+  }
+
+  private def version(ladder: LadderModel): Int = api ladderVersion ladder.id
 }

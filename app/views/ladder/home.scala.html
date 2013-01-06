@@ -1,7 +1,7 @@
 @(ladders: List[lila.ladder.LadderViewLite])(implicit ctx: Context)
 
-@tournament.layout(title = "Ladders") {
-<div class="content_box ladder_box no_padding">
+@ladder.layout(title = "Ladders") {
+<div id="ladder" class="content_box ladder_box no_padding">
   <h1>Ladders</h1>
   <div class="ladders">
     @ladders.map { v =>

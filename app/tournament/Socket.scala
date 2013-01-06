@@ -15,7 +15,7 @@ import scalaz.effects._
 import ActorApi._
 import user.User
 import game.DbGame
-import socket.{ GetHub, PingVersion, Quit, LiveGames }
+import socket.{ GetHub, GetHubVersion, PingVersion, Quit, LiveGames }
 import socket.Util.connectionFail
 import security.Flood
 import implicits.RichJs._
@@ -32,7 +32,7 @@ final class Socket(
   def start(tournamentId: String) = io {
     hubMaster ! Forward(tournamentId, Start)
   }
- 
+
   def reload(tournamentId: String) = io {
     hubMaster ! Forward(tournamentId, Reload)
   }
@@ -61,19 +61,15 @@ final class Socket(
         (tour: Tournament, uid: String, version: Int) ⇒
           (for {
             hub ← hubMaster ? GetHub(tournamentId) mapTo manifest[ActorRef]
-            socket ← hub ? Join(
-              uid = uid,
-              user = user,
-              version = version
-            ) map {
-                case Connected(enumerator, member) ⇒ (
-                  Iteratee.foreach[JsValue](
-                    controller(hub, uid, member, tournamentId)
-                  ) mapDone { _ ⇒
-                      hub ! Quit(uid)
-                    },
-                    enumerator)
-              }
+            socket ← hub ? Join(uid, user) map {
+              case Connected(enumerator, member) ⇒ (
+                Iteratee.foreach[JsValue](
+                  controller(hub, uid, member, tournamentId)
+                ) mapDone { _ ⇒
+                    hub ! Quit(uid)
+                  },
+                  enumerator)
+            }
           } yield socket).asPromise: SocketPromise
       }) | connectionFail
     }
@@ -99,6 +95,6 @@ final class Socket(
   }
 
   def blockingVersion(tournamentId: String): Int = Await.result(
-    hubMaster ? GetTournamentVersion(tournamentId) mapTo manifest[Int],
+    hubMaster ? GetHubVersion(tournamentId) mapTo manifest[Int],
     timeoutDuration)
 }

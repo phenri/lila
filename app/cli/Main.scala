@@ -19,6 +19,7 @@ object Main {
     def wiki = Wiki(env.wiki)
     def search = Search(env.search)
     def teams = Teams(env.team.teamRepo, env.user.userRepo, env.team.api)
+    def ladders = Ladders(env.ladder.api, env.user.userRepo)
 
     args.toList match {
       case "average-elo" :: Nil               ⇒ infos.averageElo
@@ -46,6 +47,7 @@ object Main {
       case "team-enable" :: uid :: Nil        ⇒ teams enable uid
       case "team-disable" :: uid :: Nil       ⇒ teams disable uid
       case "team-delete" :: uid :: Nil        ⇒ teams delete uid
+      case "ladder-mass-join" :: id :: Nil    ⇒ ladders massJoin id
       case _                                  ⇒ io("Unknown command: " + args.mkString(" "))
     }
   }

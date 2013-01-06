@@ -2,7 +2,7 @@ package lila
 package ladder
 
 import ActorApi._
-import socket.{ GetHub, History }
+import socket.{ GetHub, GetHubVersion, History }
 
 import akka.actor._
 import akka.actor.ReceiveTimeout
@@ -27,9 +27,11 @@ private[ladder] final class HubMaster(
 
   def receive = {
 
-    case msg @ Join(id, _)  ⇒ getHub(id) ! msg
+    case msg @ JoinLadder(id, _) ⇒ getHub(id) ! msg
 
-    case GetHub(id: String) ⇒ sender ! getHub(id)
+    case GetHub(id: String)      ⇒ sender ! getHub(id)
+
+    case msg @ GetHubVersion(id) ⇒ (hubs get id).fold(_ ? msg pipeTo sender, sender ! 0)
   }
 
   private def getHub(id: String) = (hubs get id) | {

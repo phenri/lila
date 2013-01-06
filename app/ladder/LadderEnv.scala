@@ -14,6 +14,7 @@ import play.api.Application
 final class LadderEnv(
     app: Application,
     userRepo: UserRepo,
+    onlineUsernames: () => Iterable[String],
     settings: Settings,
     mongodb: String ⇒ MongoCollection) {
 
@@ -25,7 +26,10 @@ final class LadderEnv(
     ladderRepo = ladderRepo,
     ladRepo = ladRepo,
     paginator = paginator,
-    hubMaster = hubMaster)
+    socket = socket,
+    hubMaster = hubMaster,
+    onlineUsernames = onlineUsernames,
+    challengeRadius = 20)
 
   private lazy val ladderRepo = new LadderRepo(mongodb(LadderCollectionLadder))
   private lazy val ladRepo = new LadRepo(mongodb(LadderCollectionLad))
@@ -36,6 +40,10 @@ final class LadderEnv(
     maxPerPage = LadderPaginatorMaxPerPage)
 
   private lazy val history = () ⇒ new History(timeout = LadderMessageLifetime)
+
+  private lazy val socket = new Socket(
+    getLadder = ladderRepo.byId,
+    hubMaster = hubMaster)
 
   private lazy val hubMaster = Akka.system.actorOf(Props(new HubMaster(
     ladRepo = ladRepo,

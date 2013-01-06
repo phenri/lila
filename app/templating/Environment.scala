@@ -32,6 +32,7 @@ object Environment
     with notification.NotificationHelper
     with analyse.AnalyseHelper
     with tournament.TournamentHelper 
+    with ladder.LadderHelper 
     with team.TeamHelper {
 
   protected def env = coreEnv

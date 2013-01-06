@@ -3,7 +3,7 @@ package ladder
 
 import ActorApi._
 import game.DbGame
-import socket._
+import socket.{ HubActor, Historical, History, GetHubVersion }
 import memo.BooleanExpiryMemo
 
 import akka.actor._
@@ -24,16 +24,20 @@ final class Hub(
 
   def receiveSpecific = {
 
-    case Join(ladderId, userId) ⇒ ladRepo.lastPos(ladderId) flatMap { pos ⇒
+    case JoinLadder(ladderId, userId) ⇒ ladRepo.lastPos(ladderId) flatMap { pos ⇒
       ladRepo.insertIO(Lad(ladderId, userId, pos + 1))
     } unsafePerformIO
 
+    case Join(uid, user) ⇒ {
+      val (enumerator, channel) = Concurrent.broadcast[JsValue]
+      val member = Member(channel, user)
+      addMember(uid, member)
+      sender ! Connected(enumerator, member)
+    }
+
     case Reload     ⇒ notifyReload
 
-    case Close ⇒ {
-      members.values foreach { _.channel.end() }
-      self ! PoisonPill
-    }
+    case GetHubVersion(_) ⇒ sender ! history.version
   }
 
   private def notifyReload {

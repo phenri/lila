@@ -1,0 +1,15 @@
+#ladder div.columns {
+  width: 100%;
+}
+#ladder div.standing_wrap {
+  width: 50%;
+  float: left;
+}
+#ladder div.challengers_wrap {
+  width: 48%;
+  margin-left: 2%;
+  float: left;
+}
+#ladder table.standing #infscr-loading {
+  width: 10px;
+}

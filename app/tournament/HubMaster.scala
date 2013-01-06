@@ -2,7 +2,7 @@ package lila
 package tournament
 
 import ActorApi._
-import socket.{ History, Broom, Close, GetHub, GetNbMembers, GetUsernames, NbMembers, GetNbHubs, SendTo, SendTos, Fen }
+import socket.{ History, Broom, Close, GetHub, GetHubVersion, GetNbMembers, GetUsernames, NbMembers, GetNbHubs, SendTo, SendTos, Fen }
 
 import akka.actor._
 import akka.actor.ReceiveTimeout
@@ -41,10 +41,7 @@ final class HubMaster(
       }
     }
 
-    case msg @ GetTournamentVersion(id) ⇒ (hubs get id).fold(
-      _ ? msg pipeTo sender,
-      sender ! 0
-    )
+    case msg @ GetHubVersion(id) ⇒ (hubs get id).fold(_ ? msg pipeTo sender, sender ! 0)
 
     case CloseTournament(id) ⇒ hubs get id foreach { hub ⇒
       hub ! Close

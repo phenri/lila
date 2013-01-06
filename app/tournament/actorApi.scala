@@ -32,15 +32,9 @@ private[tournament] object ActorApi {
       muted = user.fold(_.muted, false))
   }
 
-  case class Join(
-    uid: String,
-    user: Option[User],
-    version: Int)
-  case class Connected(
-    enumerator: JsEnumerator,
-    member: Member)
+  case class Join(uid: String, user: Option[User])
+  case class Connected(enumerator: JsEnumerator, member: Member)
   case class Talk(u: String, txt: String)
-  case class GetTournamentVersion(tournamentId: String)
   case class CloseTournament(tournamentId: String)
   case object GetTournamentIds
   case class Forward(tournamentId: String, msg: Any)

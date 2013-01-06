@@ -63,6 +63,7 @@ final class CoreEnv private (application: Application, val settings: Settings) {
   lazy val ladder = new lila.ladder.LadderEnv(
     app = app,
     userRepo = user.userRepo,
+    onlineUsernames = () ⇒ user.usernameMemo.keys,
     settings = settings,
     mongodb = mongodb.apply _)
 

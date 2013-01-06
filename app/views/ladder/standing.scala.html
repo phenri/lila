@@ -1,0 +1,38 @@
+@(v: lila.ladder.LadderView, lads: Paginator[lila.ladder.LadWithUser])(implicit ctx: Context)
+
+<table class="slist standing">
+  <thead>
+    <tr>
+      <th class="large" colspan="2">Standing</th>
+      <th>Games</th>
+      <th>Progress</th>
+    </tr>
+  </thead>
+  <tbody class="infinitescroll">
+    @lads.nextPage.map { nextPage =>
+    <tr><th class="pager none">
+        <a href="@routes.Ladder.show(v.ladder.id, nextPage)">Next</a>
+    </th></tr>
+    }
+    @lads.currentPageResults.map { l =>
+    <tr class="paginated_element">
+      <td>@l.lad.pos.</td>
+      <td>@userLink(l.user)</td>
+      <td>@l.lad.nbGames</td>
+      <td class="progress">
+        @l.lad.progress match {
+        case p if p > 0 => {
+        <span class="positive">+@p</span>
+        }
+        case p if p < 0 => {
+        <span class="negative">@p</span>
+        }
+        case _ => {
+        <span class="null">0</span>
+        }
+        }
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>

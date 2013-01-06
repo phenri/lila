@@ -1764,6 +1764,46 @@ var lichess_translations = [];
   });
 
   ///////////////////
+  // ladder.js //
+  ///////////////////
+
+  $(function() {
+
+    var $wrap = $('#ladder');
+    if (!$wrap.length) return;
+
+    var $userTag = $('#user_tag');
+    var socketUrl = $wrap.data("socket-url");
+
+    function reload() {
+      $wrap.load($wrap.data("href"), function() {
+        $('body').trigger('lichess.content_loaded');
+      });
+    }
+
+    if (!strongSocket.available) return;
+    if (typeof _ld_ == "undefined") {
+      // handle ladder list
+      lichess.socketDefaults.params.flag = "ladder";
+      lichess.socketDefaults.events.reload = reload;
+      return;
+    }
+
+    $('body').data('ladder-id', _ld_.ladder.id);
+
+    var socketUrl = $wrap.data("socket-url");
+
+    lichess.socket = new strongSocket(lichess.socketUrl + socketUrl, _ld_.version, $.extend(true, lichess.socketDefaults, {
+      events: {
+      reload: reload,
+      },
+      options: {
+        name: "ladder"
+      }
+    }));
+  });
+
+  ///////////////////
   // tournament.js //
   ///////////////////
 

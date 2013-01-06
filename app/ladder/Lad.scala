@@ -5,6 +5,7 @@ import user.User
 
 import com.novus.salat.annotations.Key
 import org.joda.time.DateTime
+import org.scala_tools.time.Imports._
 
 case class Lad(
     @Key("_id") id: String,
@@ -13,9 +14,14 @@ case class Lad(
     pos: Int,
     hist: List[Int]) {
 
-  def history: List[(DateTime, Int)] = (hist grouped 2).toList collect {
+  lazy val history: List[(DateTime, Int)] = (hist grouped 2).toList collect {
     case List(ts, p) ⇒ new DateTime(ts * 1000) -> p
   }
+
+  def nbGames = history.size - 1
+
+  // more is better
+  def progress = (history.takeWhile(_._1 < Lad.progressSince).lastOption.map(_._2) | pos) - pos
 
   def addPos(p: Int) = copy(
     pos = p,
@@ -34,9 +40,8 @@ object Lad {
     pos = pos,
     hist = Nil
   ) addPos pos
+
+  val progressSince = DateTime.now - 1.week
 }
 
-case class LadWithUser(lad: Lad, user: User) {
-  def ladder = lad.ladder
-  def pos = lad.pos
-}
+case class LadWithUser(lad: Lad, user: User) 

@@ -1,5 +1,5 @@
 package lila
-package tournament
+package ladder
 
 import http.Context
 import user.User
@@ -7,16 +7,16 @@ import user.User
 import com.codahale.jerkson.Json
 import scala.math.{ min, max, round }
 
-trait TournamentHelper {
+trait LadderHelper {
 
-  def tournamentJsData(
-    tour: Tournament,
+  def ladderJsData(
+    l: Ladder,
     version: Int,
     user: Option[User]) = Json generate {
 
     Map(
-      "tournament" -> Map(
-        "id" -> tour.id
+      "ladder" -> Map(
+        "id" -> l.id
       ),
       "version" -> version
     ).combine(user) { (map, u) ⇒

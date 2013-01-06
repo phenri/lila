@@ -16,6 +16,15 @@ private[ladder] final class LadRepo(collection: MongoCollection)
     find(ladderIdQuery(ladderId)).sort(sortQuery()).toList
   }
 
+  def challengersQuery(
+    ladderId: String,
+    pos: Int,
+    radius: Int,
+    userIds: Iterable[String]) =
+    ladderIdQuery(ladderId) ++
+      ("pos" $lte (pos + radius) $gte (pos - radius)) ++
+      ("user" $in userIds)
+
   def ladderLeader(ladderId: String): IO[Option[Lad]] = io {
     find(ladderIdQuery(ladderId)).sort(sortQuery()).limit(1).toList.headOption
   }
@@ -28,13 +37,17 @@ private[ladder] final class LadRepo(collection: MongoCollection)
     collection.find(idQuery(ladderId, userId)).limit(1).size != 0
   }
 
+  def findOne(ladderId: String, userId: String): IO[Option[Lad]] = io {
+    findOneById(id(ladderId, userId))
+  }
+
   def lastPos(ladderId: String): IO[Int] = io {
     ~(collection.find(ladderIdQuery(ladderId), DBObject("pos" -> true))
       .sort(sortQuery(-1))
       .limit(1) map { obj ⇒
         obj.getAs[Int]("pos")
       }).flatten.toList.headOption
-  } 
+  }
 
   def insertIO(lad: Lad) = io { insert(lad, WriteConcern.Safe) }
 

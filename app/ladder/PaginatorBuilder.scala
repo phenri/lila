@@ -14,7 +14,21 @@ final class PaginatorBuilder(
     maxPerPage: Int) {
 
   def ladderLads(ladder: Ladder, page: Int): Paginator[LadWithUser] =
-    paginator(new LadAdapter(ladder), page, maxPerPage)
+    paginator(new LadAdapter(
+      ladder,
+      ladRepo ladderIdQuery ladder.id
+    ), page, maxPerPage)
+
+  def challengers(
+    ladder: Ladder,
+    pos: Int,
+    radius: Int,
+    userIds: Iterable[String],
+    page: Int): Paginator[LadWithUser] =
+    paginator(new LadAdapter(
+      ladder,
+      ladRepo.challengersQuery(ladder.id, pos, radius, userIds)
+    ), page, maxPerPage)
 
   private def paginator[A](adapter: Adapter[A], page: Int, mpp: Int): Paginator[A] =
     Paginator(
@@ -23,7 +37,7 @@ final class PaginatorBuilder(
       maxPerPage = mpp
     ) | paginator(adapter, 1, mpp)
 
-  private final class LadAdapter(ladder: Ladder) extends Adapter[LadWithUser] {
+  private final class LadAdapter(ladder: Ladder, query: DBObject) extends Adapter[LadWithUser] {
 
     val nbResults = ladder.nbLads
 
@@ -35,7 +49,6 @@ final class PaginatorBuilder(
       }
     }
 
-    private def query = ladRepo ladderIdQuery ladder.id
     private def sort = ladRepo sortQuery 1
   }
 }
