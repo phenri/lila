@@ -19,11 +19,11 @@ final class Hub(
     hubTimeout: Int,
     playerTimeout: Int) extends HubActor[Member](uidTimeout) {
 
-  var lastPingTime = nowMillis
+  private var lastPingTime = nowMillis
 
   // when the players have been seen online for the last time
-  var whiteTime = nowMillis
-  var blackTime = nowMillis
+  private var whiteTime = nowMillis
+  private var blackTime = nowMillis
 
   def receiveSpecific = {
 
@@ -87,7 +87,7 @@ final class Hub(
     }
   }
 
-  def crowdEvent = Event.Crowd(
+  private def crowdEvent = Event.Crowd(
     white = ownerOf(White).isDefined,
     black = ownerOf(Black).isDefined,
     watchers = members.values
@@ -103,45 +103,45 @@ final class Hub(
         }
       })
 
-  def notify(events: List[Event]) {
+  private def notify(events: List[Event]) {
     val vevents = events map history.+=
     members.values foreach { m ⇒ batch(m, vevents) }
   }
 
-  def batch(member: Member, vevents: List[VersionedEvent]) {
+  private def batch(member: Member, vevents: List[VersionedEvent]) {
     if (vevents.nonEmpty) {
       member.channel push makeEvent("b", JsArray(vevents map (_ jsFor member)))
     }
   }
 
-  def notifyOwner(color: Color, t: String, data: JsValue) {
+  private def notifyOwner(color: Color, t: String, data: JsValue) {
     ownerOf(color) foreach { m ⇒
       m.channel push makeEvent(t, data)
     }
   }
 
-  def notifyGone(color: Color, gone: Boolean) {
+  private def notifyGone(color: Color, gone: Boolean) {
     notifyOwner(!color, "gone", JsBoolean(gone))
   }
 
-  def makeEvent(t: String, data: JsValue): JsObject =
+  private def makeEvent(t: String, data: JsValue): JsObject =
     JsObject(Seq("t" -> JsString(t), "d" -> data))
 
-  lazy val ackEvent = makeEvent("ack", JsNull)
+  private lazy val ackEvent = makeEvent("ack", JsNull)
 
-  def ownerOf(color: Color): Option[Member] =
+  private def ownerOf(color: Color): Option[Member] =
     members.values find { m ⇒ m.owner && m.color == color }
 
-  def ownerOf(uid: String): Option[Member] =
+  private def ownerOf(uid: String): Option[Member] =
     members get uid filter (_.owner)
 
-  def playerTime(color: Color): Double = color.fold(
+  private def playerTime(color: Color): Double = color.fold(
     whiteTime,
     blackTime)
 
-  def playerTime(color: Color, time: Double) {
+  private def playerTime(color: Color, time: Double) {
     color.fold(whiteTime = time, blackTime = time)
   }
 
-  def playerIsGone(color: Color) = playerTime(color) < (nowMillis - playerTimeout)
+  private def playerIsGone(color: Color) = playerTime(color) < (nowMillis - playerTimeout)
 }

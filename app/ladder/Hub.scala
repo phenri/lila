@@ -20,7 +20,7 @@ final class Hub(
     uidTimeout: Int,
     hubTimeout: Int) extends HubActor[Member](uidTimeout) with Historical[Member] {
 
-  var lastPingTime = nowMillis
+  private var lastPingTime = nowMillis
 
   def receiveSpecific = {
 
@@ -36,7 +36,7 @@ final class Hub(
     }
   }
 
-  def notifyReload {
+  private def notifyReload {
     notifyVersion("reload", JsNull)
   }
 }

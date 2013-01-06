@@ -19,9 +19,9 @@ final class Hub(
     uidTimeout: Int,
     hubTimeout: Int) extends HubActor[Member](uidTimeout) with Historical[Member] {
 
-  val joiningMemo = new BooleanExpiryMemo(uidTimeout)
+  private val joiningMemo = new BooleanExpiryMemo(uidTimeout)
 
-  var lastPingTime = nowMillis
+  private var lastPingTime = nowMillis
 
   def receiveSpecific = {
 
@@ -86,7 +86,7 @@ final class Hub(
 
   override def usernames = (super.usernames ++ joiningMemo.keys).toList.distinct
 
-  def notifyCrowd {
+  private def notifyCrowd {
     notifyVersion("crowd", JsArray({
       members.values
         .map(_.username)
@@ -102,7 +102,7 @@ final class Hub(
     } map { JsString(_) }))
   }
 
-  def notifyReload {
+  private def notifyReload {
     notifyVersion("reload", JsNull)
   }
 }
