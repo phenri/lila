@@ -12,6 +12,7 @@ import play.api.libs.concurrent._
 import play.api.Play.current
 import scalaz.effects._
 
+import ActorApi._
 import user.User
 import game.DbGame
 import socket.{ GetHub, PingVersion, Quit, LiveGames }

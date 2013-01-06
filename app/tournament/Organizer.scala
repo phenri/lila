@@ -1,6 +1,7 @@
 package lila
 package tournament
 
+import ActorApi._
 import game.DbGame
 import round.FinishGame
 

@@ -11,17 +11,18 @@ import play.api.libs.concurrent._
 import play.api.Play.current
 import play.api.libs.json._
 
+import ActorApi._
 import socket.SendTos
 
 private[tournament] final class Reminder(hubNames: List[String]) extends Actor {
 
-  lazy val hubRefs = hubNames map { name ⇒ Akka.system.actorFor("/user/" + name) }
+  private lazy val hubRefs = hubNames map { name ⇒ Akka.system.actorFor("/user/" + name) }
 
-  implicit val timeout = Timeout(1 second)
+  private implicit val timeout = Timeout(1 second)
 
   def receive = {
 
-    case RemindTournaments(tours) ⇒ tours foreach { tour =>
+    case RemindTournaments(tours) ⇒ tours foreach { tour ⇒
       val msg = SendTos(tour.activeUserIds.toSet, JsObject(Seq(
         "t" -> JsString("tournamentReminder"),
         "d" -> JsObject(Seq(

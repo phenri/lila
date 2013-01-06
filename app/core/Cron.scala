@@ -90,15 +90,15 @@ object Cron {
     }
 
     message(5 seconds) {
-      env.tournament.organizer -> tournament.CreatedTournaments
+      env.tournament.organizer -> tournament.PublicActorApi.CreatedTournaments
     }
 
     message(3 seconds) {
-      env.tournament.organizer -> tournament.StartedTournaments
+      env.tournament.organizer -> tournament.PublicActorApi.StartedTournaments
     }
 
     message(3 seconds) {
-      env.tournament.organizer -> tournament.StartPairings
+      env.tournament.organizer -> tournament.PublicActorApi.StartPairings
     }
 
     def message(freq: Duration)(to: (ActorRef, Any)) {

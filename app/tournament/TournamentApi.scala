@@ -7,6 +7,7 @@ import scalaz.effects._
 import scalaz.{ NonEmptyList, Success, Failure }
 import play.api.libs.json._
 
+import ActorApi._
 import chess.{ Mode, Variant }
 import controllers.routes
 import game.DbGame
