@@ -25,6 +25,7 @@ case class PingVersion(uid: String, version: Int)
 case object Broom
 case class Quit(uid: String)
 
+case object GetNbHubs
 case class GetHub(id: String)
 case class SendTo(userId: String, message: JsObject)
 case class SendTos(userIds: Set[String], message: JsObject)

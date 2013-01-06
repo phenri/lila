@@ -48,7 +48,6 @@ private[tournament] object ActorApi {
   case object Reload
   case object ReloadPage
   case object HubTimeout
-  case object GetNbHubs
   case class StartGame(game: DbGame)
   case class Joining(userId: String)
 

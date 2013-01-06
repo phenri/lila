@@ -3,7 +3,7 @@ package tournament
 
 import ActorApi._
 import game.DbGame
-import round.FinishGame
+import round.PublicActorApi.FinishGame
 
 import akka.actor._
 import akka.util.duration._

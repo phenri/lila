@@ -4,7 +4,7 @@ import lila._
 import views._
 import analyse._
 import game.Pov
-import round.AnalysisAvailable
+import round.PublicActorApi.AnalysisAvailable
 
 import play.api.mvc._
 import play.api.http.ContentTypes

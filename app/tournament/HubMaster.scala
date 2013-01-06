@@ -2,7 +2,7 @@ package lila
 package tournament
 
 import ActorApi._
-import socket.{ History, Broom, Close, GetHub, GetNbMembers, GetUsernames, NbMembers, SendTo, SendTos, Fen }
+import socket.{ History, Broom, Close, GetHub, GetNbMembers, GetUsernames, NbMembers, GetNbHubs, SendTo, SendTos, Fen }
 
 import akka.actor._
 import akka.actor.ReceiveTimeout

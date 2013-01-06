@@ -1,6 +1,7 @@
 package lila
 package round
 
+import ActorApi._
 import ai.Ai
 import game.{ GameRepo, PgnRepo, Pov, PovRef, Handler }
 import i18n.I18nKey.{ Select ⇒ SelectI18nKey }
@@ -93,7 +94,7 @@ final class Hand(
       (povOption toValid "No such game" flatMap { pov ⇒
         implicit val timeout = Timeout(1 second)
         Await.result(
-          hubMaster ? round.IsGone(pov.game.id, !pov.color) map {
+          hubMaster ? IsGone(pov.game.id, !pov.color) map {
             case true ⇒ finisher resignForce pov
             case _    ⇒ !!("Opponent is not gone")
           },

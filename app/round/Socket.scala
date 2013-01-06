@@ -13,6 +13,7 @@ import play.api.Play.current
 import scalaz.effects._
 import scalaz.{ Success, Failure }
 
+import ActorApi._
 import game.{ Pov, PovRef }
 import user.User
 import chess.Color

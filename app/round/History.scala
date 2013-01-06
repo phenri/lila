@@ -4,6 +4,7 @@ package round
 import play.api.libs.json._
 import scalaz.effects._
 
+import ActorApi._
 import chess.Color
 import memo.Builder
 

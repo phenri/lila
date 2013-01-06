@@ -1,8 +1,7 @@
 package lila
 package monitor
 
-import socket.GetNbMembers
-import round.GetNbHubs
+import socket.{ GetNbMembers, GetNbHubs }
 
 import akka.actor._
 import akka.pattern.{ ask, pipe }

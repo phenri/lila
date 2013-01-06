@@ -1,6 +1,7 @@
 package lila
 package round
 
+import ActorApi._
 import socket._
 import chess.{ Color, White, Black }
 
