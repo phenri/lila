@@ -13,9 +13,12 @@ case class HookConfig(
     increment: Int,
     mode: Mode,
     color: Color,
-    eloRange: EloRange) extends HumanConfig {
+    eloRange: EloRange,
+    ladder: Boolean) extends HumanConfig {
 
-  def >> = (variant.id, clock, time, increment, mode.id.some, eloRange.toString.some, color.name).some
+  def >> = (variant.id, clock, time, increment, modeId.some, eloRange.toString.some, color.name).some
+
+  private def modeId = ladder.fold(HookConfig.LADDER_MODE_ID, mode.id)
 
   def hook(user: Option[User]) = Hook(
     variant = variant,
@@ -31,7 +34,8 @@ case class HookConfig(
     t = time,
     i = increment,
     m = mode.id,
-    e = eloRange.toString)
+    e = eloRange.toString,
+    l = ladder)
 
   def noRatedUnlimited = mode.casual || clock
 }
@@ -47,9 +51,10 @@ object HookConfig extends BaseHumanConfig {
       increment = i,
       mode = realMode,
       eloRange = e.filter(_ ⇒ realMode.rated).fold(
-        EloRange.orDefault, 
+        EloRange.orDefault,
         EloRange.default),
-      color = Color(c) err "Invalid color " + c)
+      color = Color(c) err "Invalid color " + c,
+      ladder = m == HookConfig.LADDER_MODE_ID)
   }
 
   val default = HookConfig(
@@ -59,7 +64,8 @@ object HookConfig extends BaseHumanConfig {
     increment = 8,
     mode = Mode.default,
     eloRange = EloRange.default,
-    color = Color.default)
+    color = Color.default,
+    ladder = false)
 }
 
 private[setup] case class RawHookConfig(
@@ -68,7 +74,8 @@ private[setup] case class RawHookConfig(
     t: Int,
     i: Int,
     m: Int,
-    e: String) {
+    e: String,
+    l: Boolean = false) {
 
   def decode = for {
     variant ← Variant(v)
@@ -81,5 +88,6 @@ private[setup] case class RawHookConfig(
     increment = i,
     mode = mode,
     eloRange = eloRange,
-    color = Color.White)
+    color = Color.White,
+    ladder = l)
 }

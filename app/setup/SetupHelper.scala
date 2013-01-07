@@ -13,6 +13,9 @@ trait SetupHelper { self: I18nHelper ⇒
     Mode.Rated.id.toString -> trans.rated.str()
   )
 
+  def translatedModeChoicesWithLadder(implicit ctx: Context) = 
+    translatedModeChoices :+ ("9", trans.ladder.str())
+
   def translatedVariantChoices(implicit ctx: Context) = List(
     Variant.Standard.id.toString -> trans.standard.str(),
     Variant.Chess960.id.toString -> Variant.Chess960.name.capitalize

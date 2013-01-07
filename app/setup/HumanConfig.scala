@@ -11,6 +11,8 @@ trait HumanConfig extends Config {
 
 trait BaseHumanConfig extends BaseConfig {
 
+  val LADDER_MODE_ID = 9
+
   val modes = Mode.all map (_.id)
-  val modeChoices = Mode.all map { e ⇒ e.id.toString -> e.toString }
+  val modesWithLadder = modes :+ LADDER_MODE_ID
 }

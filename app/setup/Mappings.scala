@@ -15,6 +15,9 @@ object Mappings {
   def mode(isAuth: Boolean) = optional(number
     .verifying(HookConfig.modes contains _)
     .verifying(m ⇒ m == Mode.Casual.id || isAuth))
+  def modeWithLadder(isAuth: Boolean) = optional(number
+    .verifying(HookConfig.modesWithLadder contains _)
+    .verifying(m ⇒ m == Mode.Casual.id || isAuth))
   val eloRange = optional(nonEmptyText.verifying(EloRange valid _))
   val color = nonEmptyText.verifying(Color.names contains _)
   val level = number.verifying(AiConfig.levels contains _)

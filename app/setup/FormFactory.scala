@@ -41,7 +41,7 @@ private[setup] final class FormFactory(
       "increment" -> increment,
       "level" -> level,
       "color" -> color
-    )(AiConfig.<<)(_.>>)
+    )(AiConfig.<<)(_.>>) verifying ("Invalid clock", _.validClock)
   )
 
   def aiConfig(implicit ctx: Context): IO[AiConfig] = savedConfig map (_.ai)
@@ -71,7 +71,7 @@ private[setup] final class FormFactory(
       "clock" -> clock,
       "time" -> time,
       "increment" -> increment,
-      "mode" -> mode(ctx.isAuth),
+      "mode" -> modeWithLadder(ctx.isAuth),
       "eloRange" -> eloRange,
       "color" -> nonEmptyText.verifying(Color.names contains _)
     )(HookConfig.<<)(_.>>)
