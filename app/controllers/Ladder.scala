@@ -14,10 +14,14 @@ object Ladder extends LilaController {
 
   private def api = env.ladder.api
 
-  val home = Open { implicit ctx ⇒
-    IOk(api.ladders map { ladders ⇒
-      html.ladder home ladders
-    })
+  // val home = Open { implicit ctx ⇒
+  //   IOk(api.ladders map { ladders ⇒
+  //     html.ladder home ladders
+  //   })
+  // }
+
+  val home = Open { ctx ⇒
+    Redirect(routes.Ladder.show("free"))
   }
 
   def show(id: String, page: Int) = Open { implicit ctx ⇒

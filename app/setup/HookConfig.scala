@@ -24,6 +24,7 @@ case class HookConfig(
     variant = variant,
     clock = makeClock,
     mode = mode,
+    ladder = ladder,
     color = color.name,
     user = user,
     eloRange = eloRange)
@@ -54,7 +55,7 @@ object HookConfig extends BaseHumanConfig {
         EloRange.orDefault,
         EloRange.default),
       color = Color(c) err "Invalid color " + c,
-      ladder = m == HookConfig.LADDER_MODE_ID)
+      ladder = ~m == HookConfig.LADDER_MODE_ID)
   }
 
   val default = HookConfig(

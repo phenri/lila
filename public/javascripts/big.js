@@ -1709,7 +1709,8 @@ var lichess_translations = [];
     }
 
     function renderHook(hook) {
-      if (!isRegistered && hook.mode == "Rated") return "";
+      console.debug(hook);
+      if (!isRegistered && (hook.mode == "Rated" || hook.ladder)) return "";
       hook.action = hook.ownerId ? "cancel" : "join";
       if (hook.emin && hook.action == "join" && (myElo < parseInt(hook.emin) || myElo > parseInt(hook.emax))) return "";
       var html = "", isEngine, engineMark, userClass, mode;
@@ -1725,12 +1726,16 @@ var lichess_translations = [];
       }
       html += '</td>';
       if (isRegistered) {
-        mode = $.trans(hook.mode);
-        if (hook.emin && (hook.emin > 800 || hook.emax < 2500)) {
-          mode += "<span class='elorange'>" + hook.emin + ' - ' + hook.emax + '</span>';
+        if (hook.ladder) {
+          mode = "Ladder";
+        } else {
+          mode = $.trans(hook.mode);
+          if (hook.emin && (hook.emin > 800 || hook.emax < 2500)) {
+            mode += "<span class='elorange'>" + hook.emin + ' - ' + hook.emax + '</span>';
+          }
         }
       } else {
-        mode = "";
+        mode = "", ladder = "";
       }
       if (hook.variant == 'Chess960') {
         html += '<td><a href="http://en.wikipedia.org/wiki/Chess960"><strong>960</strong></a> ' + mode + '</td>';
