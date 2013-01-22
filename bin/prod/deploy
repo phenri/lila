@@ -11,6 +11,7 @@ if [ -z $1 ]; then
 elif [ $1 = "main" ]; then
   REMOTE="hollie"
   REMOTE_DIR="/home/lila"
+  FIRESALE=1
 elif [ $1 = "ai" ]; then
   REMOTE="cook"
   REMOTE_DIR="/home/lila"

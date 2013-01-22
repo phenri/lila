@@ -177,4 +177,9 @@ object Event {
       "watchers" -> JsArray(watchers map JsString)
     ))
   }
+
+  case object Firesale extends Event {
+    def typ = "firesale"
+    def data = JsNull
+  }
 }

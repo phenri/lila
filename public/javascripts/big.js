@@ -27,7 +27,8 @@ var lichess_translations = [];
         pingMaxLag: 8000, // time to wait for pong before reseting the connection
         pingDelay: 1500, // time between pong and ping
         lagTag: false, // jQuery object showing ping lag
-        ignoreUnknownMessages: false
+        ignoreUnknownMessages: false,
+        firesaleDelay: 3000,
       }
     };
     $.extend(true, self.settings, settings);
@@ -41,6 +42,7 @@ var lichess_translations = [];
     self.lastPingTime = self.now();
     self.currentLag = 0;
     self.averageLag = 0;
+    self.firesaling = false;
     self.connect();
     $(window).unload(function() {
       self.destroy();
@@ -61,6 +63,7 @@ var lichess_translations = [];
         self.debug("connected to " + self.fullUrl);
         self.onSuccess();
         if (self.options.offlineTag) self.options.offlineTag.hide();
+        self.firesaling = false;
         self.pingNow();
         $('body').trigger('socket.open');
       };
@@ -81,7 +84,13 @@ var lichess_translations = [];
       var data = d || {};
       var message = JSON.stringify({t: t, d: data});
       self.debug(message);
-      self.ws.send(message);
+      if (self.firesaling) {
+        setTimeout(function() { location.reload(); }, self.options.firesaleDelay);
+      } else if (self.ws) {
+        self.ws.send(message);
+      } else {
+        location.reload();
+      }
     },
     scheduleConnect: function(delay) {
       var self = this;
@@ -142,6 +151,10 @@ var lichess_translations = [];
           location.reload();
           return;
         }
+        if (m.t == "firesale") {
+          self.firesale();
+          return;
+        }
         var h = self.settings.events[m.t];
         if ($.isFunction(h)) h(m.d || null);
         else if(!self.options.ignoreUnknownMessages) {
@@ -156,6 +169,13 @@ var lichess_translations = [];
       clearTimeout(self.pingSchedule);
       clearTimeout(self.connectSchedule);
       if (self.ws) { self.ws.close(); self.ws = null; }
+    },
+    firesale: function() {
+      var self = this;
+      console.debug("FIRESALE!!");
+      if (self.options.offlineTag) self.options.offlineTag.show();
+      self.destroy();
+      setTimeout(function() { self.connect(); }, self.options.firesaleDelay);
     },
     onError: function(e) {
       setTimeout(function() {

@@ -49,7 +49,10 @@ object Main {
       case "team-enable" :: uid :: Nil        ⇒ teams enable uid
       case "team-disable" :: uid :: Nil       ⇒ teams disable uid
       case "team-delete" :: uid :: Nil        ⇒ teams delete uid
+      case "firesale" :: Nil                  ⇒ env.firesaleTrigger inject "FIRESALE STARTED"
       case _                                  ⇒ io("Unknown command: " + args.mkString(" "))
     }
+  } flatMap { output ⇒
+    putStrLn("[cli] " + (args mkString " ")) >> putStrLn(output) inject output
   }
 }

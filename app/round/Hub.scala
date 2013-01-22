@@ -85,6 +85,8 @@ final class Hub(
       members.values foreach { _.channel.end() }
       self ! PoisonPill
     }
+
+    case Firesale                   ⇒ notify(List(Event.Firesale))
   }
 
   def crowdEvent = Event.Crowd(
