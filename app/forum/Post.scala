@@ -20,7 +20,11 @@ case class Post(
 
   def showAuthor = (author map (_.trim) filter ("" !=)) | User.anonymous
 
+  def showUsernameOrAuthor = userId | showAuthor
+
   def isTeam = categId startsWith "team-"
+
+  def isStaff = categId == "staff"
 }
 
 object Post {

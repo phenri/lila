@@ -31,13 +31,11 @@ AI thinks during your time (premove?) http://en.lichess.org/forum/lichess-feedba
 - in fact it does not, but the UI clocks only update once the ai made the move
 - solution: do AI asynchronously. Send player move events right away,
 - and ai events when the ai completes
-IP smart tools for admins
 lsof show the open websockets on prod. The recurrent bug could come from the open descriptors limit (ulimit -n)
 not possible to copy the link URL invite when using a touch device. Can this be easily fixed by adding an automatic "copy" button next to the link?
 search bug http://en.lichess.org/games/search?players.a=&players.b=&players.winner=&eloMin=&eloMax=&hasAi=&aiLevelMin=&aiLevelMax=&variant=&mode=1&opening=&turnsMin=&turnsMax=&durationMin=&durationMax=&status=35&dateMin=&dateMax=&sort.field=tu&sort.order=asc
 takeback substract time for person granting
 add fullscreen mode for spectators and load new games in a loop (based on certain filter options) - thus creating a chess tv channel
-team search
 only team forum posts on the homepage?
 look at gameknot teams (to steal ideas)
 clock color (or end of time indication)
@@ -55,8 +53,10 @@ time color toward end http://fr.lichess.org/forum/lichess-feedback/suggestion-ti
 fast join game = creator not redirected properly?
 start clock after black move http://en.lichess.org/forum/lichess-feedback/shouldnt-the-time-start-time-after-blacks-first-move#3
 national flags http://en.lichess.org/forum/lichess-feedback/suggestion-display-national-flag#4
-optimize Query.opponents (user with less games first)
+restrict hook creation by IP
 check denormalization of user game fields
 opponent history http://imgur.com/ur1Mt http://en.lichess.org/forum/lichess-feedback/match-history#10
 show tournament trophies on user profile
-restrict hook creation by IP
+lots of bookmarks break the page style http://en.lichess.org/rc7l3n66
+forum, message search
+mute ip

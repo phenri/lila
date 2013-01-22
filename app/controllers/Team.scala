@@ -20,6 +20,7 @@ object Team extends LilaController {
   private def forms = env.team.forms
   private def api = env.team.api
   private def paginator = env.team.paginator
+  private def searchPaginator = env.team.searchPaginator
 
   def home(page: Int) = Open { implicit ctx ⇒
     Ok(html.team.home(paginator popularTeams page))
@@ -29,6 +30,13 @@ object Team extends LilaController {
     Async(Akka.future {
       IOptionIOk(teamRepo byId id) { team ⇒ renderTeam(team, page) }
     })
+  }
+
+  def search(text: String, page: Int) = OpenBody { implicit ctx ⇒
+    text.trim match {
+      case ""   ⇒ Ok(html.team.home(paginator popularTeams page))
+      case text ⇒ Ok(html.team.search(text, searchPaginator(text, page)))
+    }
   }
 
   private def renderTeam(team: TeamModel, page: Int = 1)(implicit ctx: Context) =
