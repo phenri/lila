@@ -18,4 +18,6 @@ private[ladder] final class LadderRepo(collection: MongoCollection)
     update(idQuery(ladderId), $inc("nbLads" -> by))
   }
   def idQuery(id: String) = DBObject("_id" -> id)
+
+  def insertIO(ladder: Ladder) = io(insert(ladder)).void
 }

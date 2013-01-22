@@ -50,6 +50,8 @@ object Main {
       case "team-enable" :: uid :: Nil        ⇒ teams enable uid
       case "team-disable" :: uid :: Nil       ⇒ teams disable uid
       case "team-delete" :: uid :: Nil        ⇒ teams delete uid
+      case "ladder-create" :: name :: Nil     ⇒ ladders create name
+      case "ladder-join" :: id :: uid :: Nil  ⇒ ladders.join(id, uid)
       case "ladder-mass-join" :: id :: Nil    ⇒ ladders massJoin id
       case _                                  ⇒ io("Unknown command: " + args.mkString(" "))
     }

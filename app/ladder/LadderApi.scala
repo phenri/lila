@@ -6,9 +6,11 @@ import game.DbGame
 import user.User
 import socket.GetHubVersion
 import core.Futuristic.futureToIo
+import templating.StringHelper
 
 import scalaz.effects._
 import akka.actor.ActorRef
+import org.joda.time.DateTime
 
 final class LadderApi(
     ladderRepo: LadderRepo,
@@ -58,4 +60,13 @@ final class LadderApi(
 
   def websocket(id: String, version: Option[Int], uid: Option[String], user: Option[User]) =
     socket.join(id, version, uid, user)
+
+  def create(name: String, desc: String): IO[Unit] = Ladder(
+    id = StringHelper slugify name,
+    name = name,
+    desc = desc,
+    nbLads = 0,
+    nbGames = 0,
+    createdAt = DateTime.now) |> ladderRepo.insertIO
+
 }
