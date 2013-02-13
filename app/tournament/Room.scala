@@ -20,7 +20,7 @@ object Room {
   case class Message(author: Option[String], text: String) {
 
     def render: String =
-      """<li><span>%s</span>%s</li>""".format(
+      """<div class="li"><span>%s</span>%s</div>""".format(
         author.fold(
           u ⇒ """<a class="user_link" href="%s">%s</a>""".format(
             userRoute(u), u take 12

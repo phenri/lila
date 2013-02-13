@@ -13,9 +13,9 @@
     type="checkbox" />
   </div>
   <div class="lichess_chat_inner">
-    <ol class="lichess_messages">
-      <li><a href="@routes.Lobby.log()">View older messages</a></li>
-    </ol>
+    <div class="lichess_messages">
+      <div class="li"><a href="@routes.Lobby.log()">View older messages</a></div>
+    </div>
     <form action="#">
       <input class="lichess_say lichess_hint" value="@trans.talkInChat()" />
       <a class="send"></a>

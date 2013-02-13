@@ -259,7 +259,7 @@ var lichess_translations = [];
     }, 1000);
 
     if ($board = $('div.with_marks').orNot()) {
-      $.displayBoardMarks($board.parent(), $('#lichess > div.lichess_player_white').length);
+      displayBoardMarks($board.parent(), $('#lichess > div.lichess_player_white').length);
     }
 
     // themepicker
@@ -450,22 +450,24 @@ var lichess_translations = [];
 
   });
 
-  $.fn.scrollable = function() {
-    this.mousewheel(function(e, delta) {
-      this.scrollTop -= delta * 30;
-      return false;
-    });
+  $.fn.scrollable = function() { 
+    this.mCustomScrollbar({
+      // scrollEasing: "linear",
+      scrollInertia: 0,
+      scrollButtons: {
+        enable: true
+      },
+      advanced: {
+        updateOnBrowserResize: false
+      }
+    }).mCustomScrollbar("scrollTo", "bottom");
   };
 
-  $.fn.orNot = function() {
-    return this.length == 0 ? false: this;
-  };
+  $.fn.orNot = function() { return this.length == 0 ? false: this; };
 
-  $.trans = function(text) {
-    return lichess_translations[text] ? lichess_translations[text] : text;
-  }
+  $.trans = function(text) { return lichess_translations[text] ? lichess_translations[text] : text; }
 
-  $.displayBoardMarks = function($board, isWhite) {
+  function displayBoardMarks($board, isWhite) {
     if (isWhite) {
       var factor = 1;
       var base = 0;
@@ -473,14 +475,12 @@ var lichess_translations = [];
       var factor = - 1;
       var base = 575;
     }
-    $board.find('span.board_mark').remove();
-    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    var marks = '';
+    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'], marks = '';
     for (i = 1; i < 9; i++) {
       marks += '<span class="board_mark vert" style="bottom:' + (factor * i * 64 - 38 + base) + 'px;">' + i + '</span>';
       marks += '<span class="board_mark horz" style="left:' + (factor * i * 64 - 35 + base) + 'px;">' + letters[i - 1] + '</span>';
     }
-    $board.append(marks);
+    $board.remove('span.board_mark').append(marks);
   };
 
   function urlToLink(text) {
@@ -1130,7 +1130,6 @@ var lichess_translations = [];
       self.$msgs.find('>li').each(function() {
         $(this).html(urlToLink($(this).html()));
       });
-      self.$msgs.scrollable();
       var $form = self.element.find('form');
       self.$msgs[0].scrollTop = 9999999;
       var $input = self.element.find('input.lichess_say').one("focus", function() {
@@ -1557,7 +1556,6 @@ var lichess_translations = [];
 
     if (chatExists) {
       var $form = $chat.find('form');
-      $chat.find('.lichess_messages').scrollable();
       var $input = $chat.find('input.lichess_say').one("focus", function() {
         $input.val('').removeClass('lichess_hint');
       });
@@ -1597,26 +1595,22 @@ var lichess_translations = [];
       $('body').trigger('lichess.content_loaded');
     }
     function buildChatMessage(txt, username) {
-      var html = '<li><span>';
+      var html = '<div class="li"><span>';
       if (typeof username != "undefined" && username != "") {
         html += '<a class="user_link" href="/@/'+username+'">'+username.substr(0, 12) + '</a>';
       } else {
         html += '-';
       }
-      html += '</span>' + urlToLink(txt) + '</li>';
+      html += '</span>' + urlToLink(txt) + '</div>';
       return html;
     }
     function removeFromChat(regex) {
       var r = new RegExp(regex);
-      $chat.find('.lichess_messages li').filter(function() {
+      $chat.find('.lichess_messages div.li').filter(function() {
         return r.test($(this).html());
       }).remove();
     }
 
-    $bot.on("click", "tr", function() { location.href = $(this).find('a.watch').attr("href"); });
-    $bot.find('.undertable_inner').scrollable();
-    $newpostsinner.scrollable();
-    $newpostsinner[0].scrollTop = 9999999;
     $newpostsinner.scrollable();
     setInterval(function() {
       $.ajax($newposts.data('url'), {
@@ -1631,12 +1625,16 @@ var lichess_translations = [];
 
     addHooks(lichess_preload.pool);
     renderTimeline(lichess_preload.timeline);
+    $bot.on("click", "tr", function() { location.href = $(this).find('a.watch').attr("href"); });
+    $bot.find('.undertable_inner').scrollable();
+
     if (chatExists) {
       var chatHtml = "";
       $.each(lichess_preload.chat, function() {
         if (this.txt) chatHtml += buildChatMessage(this.txt, this.u);
       });
       addToChat(chatHtml);
+      $chat.find('.lichess_messages').scrollable();
     }
     lichess.socket = new strongSocket(lichess.socketUrl + "/lobby/socket", lichess_preload.version, $.extend(true, lichess.socketDefaults, {
       params: {

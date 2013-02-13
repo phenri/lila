@@ -33,7 +33,7 @@ object Room {
   }, encoded drop 1)
 
   def render(msg: (String, String)): String = msg match {
-    case (author, text) ⇒ """<li class="%s%s">%s</li>""".format(
+    case (author, text) ⇒ """<div class="li %s%s">%s</div>""".format(
       author, 
       if (author == "system") " trans_me" else "", 
       escapeXml(text)

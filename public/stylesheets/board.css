@@ -672,12 +672,12 @@ div.lichess_chat a.send:hover {
   opacity: 1;
 }
 
-div.lichess_chat ol.lichess_messages li {
+div.lichess_chat div.lichess_messages div.li {
   margin: 0.6em 0;
   padding-left: 18px;
   line-height: 14px;
 }
-div.anon_chat ol.lichess_messages li {
+div.anon_chat div.lichess_messages div.li {
   padding-left: 3px;
 }
 div.anon_chat span.title {
@@ -698,13 +698,13 @@ div.anon_chat a.user_link:hover {
   text-decoration: underline;
 }
 
-div.lichess_chat ol.lichess_messages li.white {
+div.lichess_chat div.lichess_messages div.white {
   background: url(../images/klw14.png) no-repeat;
 }
-div.lichess_chat ol.lichess_messages li.black {
+div.lichess_chat div.lichess_messages div.black {
   background: url(../images/klb14.png) no-repeat;
 }
-div.lichess_chat.hidden ol.lichess_messages, div.lichess_chat.hidden form {
+div.lichess_chat.hidden div.lichess_messages, div.lichess_chat.hidden form {
   opacity: 0;
 }
 

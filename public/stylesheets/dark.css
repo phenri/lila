@@ -275,10 +275,10 @@ body.dark div.lichess_cemetery div.lichess_piece,
 body.dark div.lichess_table div.lichess_piece {
   background-image: url(../images/sprite_invert.png);
 }
-body.dark div.lichess_chat ol.lichess_messages li.white {
+body.dark div.lichess_chat div.lichess_messages div.white {
   background: url(../images/kdw14.png) no-repeat;
 }
-body.dark div.lichess_chat ol.lichess_messages li.black {
+body.dark div.lichess_chat div.lichess_messages div.black {
   background: url(../images/kdb14.png) no-repeat;
 }
 
@@ -367,4 +367,20 @@ body.dark div.hooks td.action.empty {
 }
 body.dark .s16.ddown {
   background-position: right -368px;
+}
+
+body.dark .mCSB_scrollTools .mCSB_buttonUp{
+	background-position:-48px 0;
+}
+body.dark .mCSB_scrollTools .mCSB_buttonDown{
+	background-position:-48px -20px;
+}
+body.dark .mCSB_scrollTools .mCSB_draggerRail{
+	background:rgba(0,0,0,0.4);
+}
+body.dark .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	background:rgba(160,160,160,0.65);
+}
+body.dark .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar{
+	background:rgba(160,160,160,0.85);
 }
