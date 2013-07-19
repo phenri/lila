@@ -1,5 +1,4 @@
-import sbt._
-import Keys._
+import sbt._, Keys._
 
 object BuildSettings {
 
@@ -12,6 +11,14 @@ object BuildSettings {
     parallelExecution in Test := false,
     scalacOptions := compilerOptions,
     sources in doc in Compile := List()
+  )
+
+  def consoleSettings = Seq(
+    javaOptions in run ++= Seq(
+      "-javaagent:../lib/weaver/aspectjweaver.jar",
+      "-Dorg.aspectj.tracing.factory=default",
+      "-Djava.library.path=../lib/sigar"
+    )
   )
 
   def defaultDeps = Seq(
@@ -41,6 +48,6 @@ object BuildSettings {
     scalaSource in Test <<= (sourceDirectory in Test)(identity)
   )
 
-	def projectToRef(p: Project): ProjectReference = LocalProject(p.id)
-	def classpathDependency(p: ProjectReference): ClasspathDependency = new ClasspathDependency(p, None)
+  def projectToRef(p: Project): ProjectReference = LocalProject(p.id)
+  def classpathDependency(p: ProjectReference): ClasspathDependency = new ClasspathDependency(p, None)
 }

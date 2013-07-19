@@ -1,6 +1,5 @@
-import sbt._
-import Keys._
 import play.Project._
+import sbt._, Keys._
 
 object ApplicationBuild extends Build {
 
@@ -20,7 +19,7 @@ object ApplicationBuild extends Build {
         "lila.security.Permission",
         "lila.app.templating.Environment._",
         "lila.common.paginator.Paginator")
-  ) dependsOn api aggregate api
+  ) settings (consoleSettings: _*) dependsOn api aggregate api
 
   lazy val modules = Seq(
     chess, common, db, user, security, wiki, hub, socket,
