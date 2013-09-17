@@ -34,7 +34,7 @@ private[ai] final class Server(queue: ActorRef, config: Config) {
   }
 
   def load: Fu[Int] = {
-    import makeTimeout.short
+    import Server.loadTimeout
     queue ? GetLoad mapTo manifest[Int]
   }
 
@@ -47,4 +47,9 @@ private[ai] final class Server(queue: ActorRef, config: Config) {
       case (pos, piece) ⇒ piece.color.fold(pos.file.toUpperCase, pos.file)
     } mkString "")
   }
+}
+
+object Server {
+
+  private[stockfish] implicit val loadTimeout = makeTimeout seconds 10
 }

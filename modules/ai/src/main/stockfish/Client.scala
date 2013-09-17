@@ -30,7 +30,7 @@ final class Client(
     }
 
   def load: Fu[Option[Int]] = {
-    import makeTimeout.short
+    import Server.loadTimeout
     actor ? GetLoad mapTo manifest[Option[Int]]
   }
 
@@ -42,17 +42,20 @@ final class Client(
       case IsHealthy ⇒ sender ! load.isDefined
       case GetLoad   ⇒ sender ! load
       case CalculateLoad ⇒ try {
-        load = fetchLoad await makeTimeout.short
+        load = fetchLoad await Server.loadTimeout
       }
       catch {
         case e: Exception ⇒ {
           logwarn("[stockfish client] " + e.getMessage)
           load = none
         }
+      } finally {
+        system.scheduler.scheduleOnce(1.second, self, CalculateLoad)
       }
     }
+
+    override def preStart() { self ! CalculateLoad }
   }))
-  system.scheduler.schedule(1.millis, 1.second, actor, CalculateLoad)
 
   def or(fallback: lila.ai.Ai): Fu[lila.ai.Ai] = {
     import makeTimeout.short
