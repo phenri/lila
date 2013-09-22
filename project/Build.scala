@@ -1,3 +1,4 @@
+import com.typesafe.sbt.SbtAtmos.atmosSettings
 import play.Project._
 import sbt._, Keys._
 
@@ -6,14 +7,14 @@ object ApplicationBuild extends Build {
   import BuildSettings._
   import Dependencies._
 
-  override def rootProject = Some(lila) 
+  override def rootProject = Some(lila)
 
   lazy val lila = _root_.play.Project("lila", "5.0") settings (
     offline := true,
     libraryDependencies ++= Seq(
       scalaz, scalalib, hasher, config, apache, scalaTime,
       csv, jgit, actuarius, scalastic, findbugs, reactivemongo,
-      playReactivemongo, spray.caching),
+      playReactivemongo, spray.caching, atmos),
       scalacOptions := compilerOptions,
       sources in doc in Compile := List(),
       templatesImport ++= Seq(
@@ -22,7 +23,7 @@ object ApplicationBuild extends Build {
         "lila.security.Permission",
         "lila.app.templating.Environment._",
         "lila.common.paginator.Paginator")
-  ) dependsOn api aggregate api
+  ) settings (atmosSettings: _*) dependsOn api aggregate api
 
   lazy val modules = Seq(
     chess, common, db, user, security, wiki, hub, socket,

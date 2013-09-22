@@ -47,6 +47,7 @@ object Dependencies {
   val scalastic = "org.scalastic" %% "scalastic" % "0.90.2"
   val reactivemongo = "org.reactivemongo" %% "reactivemongo" % "0.10.7-THIB"
   val playReactivemongo = "org.reactivemongo" %% "play2-reactivemongo" % "0.10.7-THIB"
+  val atmos = "com.typesafe.atmos" % "trace-akka-2.2.0_2.10" % "1.2.1"
   object play {
     val version = "2.2.0"
     val api = "com.typesafe.play" %% "play" % version
