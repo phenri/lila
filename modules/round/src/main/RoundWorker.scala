@@ -12,7 +12,7 @@ import lila.hub.pull
 import lila.i18n.I18nKey.{ Select ⇒ SelectI18nKey }
 import makeTimeout.large
 
-private[round] final class Round(
+private[round] final class RoundWorker(
     gameId: String,
     messenger: Messenger,
     takebacker: Takebacker,
@@ -21,27 +21,9 @@ private[round] final class Round(
     player: Player,
     drawer: Drawer,
     socketHub: ActorRef,
-    moretimeDuration: Duration) extends Actor {
+    moretimeDuration: Duration) extends Actor with pull.Worker {
 
-  val pullMaster = context.actorOf(
-    Props(new pull.Master(new RoundWorker(
-      gameId: String,
-      messenger: Messenger,
-      takebacker: Takebacker,
-      finisher: Finisher,
-      rematcher: Rematcher,
-      player: Player,
-      drawer: Drawer,
-      socketHub: ActorRef,
-      moretimeDuration: Duration))),
-    name = "master"
-  )
-
-  context setReceiveTimeout 30.seconds
-
-  def receive = {
-
-    case ReceiveTimeout ⇒ self ! PoisonPill
+  def doWork(work: Any, requester: ActorRef) = work match {
 
     case Send(events)   ⇒ socketHub ! Tell(gameId, events)
 
