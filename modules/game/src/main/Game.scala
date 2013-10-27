@@ -59,9 +59,10 @@ case class Game(
 
   def opponent(c: Color): Player = player(!c)
 
-  def turnColor = Color(0 == turns % 2)
+  lazy val turnColor = Color(0 == turns % 2)
 
   def turnOf(p: Player) = p == player
+  def turnOf(c: Color) = c == turnColor
 
   def fullIdOf(player: Player): Option[String] =
     (players contains player) option id + player.id
