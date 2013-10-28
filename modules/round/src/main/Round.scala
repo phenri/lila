@@ -27,10 +27,6 @@ private[round] final class Round(
 
   def process = {
 
-    case ReceiveTimeout ⇒ fuccess {
-      self ! SequentialActor.Terminate
-    }
-
     case p: HumanPlay ⇒ handle(p.playerId) { pov ⇒
       pov.game.outoftimePlayer.fold(player.human(p)(pov))(outOfTime(pov.game))
     }
