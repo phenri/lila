@@ -28,8 +28,6 @@ private[round] final class Round(
 
     case ReceiveTimeout ⇒ self ! PoisonPill
 
-    case Send(events)   ⇒ socketHub ! Tell(gameId, events)
-
     case p: HumanPlay ⇒ handle(p.playerId) { pov ⇒
       pov.game.outoftimePlayer.fold(player.human(p)(pov))(outOfTime(pov.game))
     }
