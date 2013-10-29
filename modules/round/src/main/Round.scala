@@ -4,13 +4,12 @@ import scala.concurrent.duration._
 
 import akka.actor._
 import akka.pattern.{ ask, pipe }
+import makeTimeout.large
 
 import actorApi._, round._
 import lila.game.{ Game, GameRepo, PgnRepo, Pov, PovRef, PlayerRef, Event, Progress }
 import lila.hub.actorApi.map._
-import lila.hub.SequentialActor
 import lila.i18n.I18nKey.{ Select ⇒ SelectI18nKey }
-import makeTimeout.large
 
 private[round] final class Round(
     gameId: String,
@@ -21,21 +20,21 @@ private[round] final class Round(
     player: Player,
     drawer: Drawer,
     socketHub: ActorRef,
-    moretimeDuration: Duration) extends SequentialActor {
+    moretimeDuration: Duration) extends Actor {
 
   context setReceiveTimeout 30.seconds
 
-  def process(work: Any): Funit = work match {
+  def receive = {
 
-    case ReceiveTimeout ⇒ fuccess {
-      self ! PoisonPill
-    }
+    case ReceiveTimeout ⇒ self ! PoisonPill
+
+    case Send(events)   ⇒ socketHub ! Tell(gameId, events)
 
     case p: HumanPlay ⇒ handle(p.playerId) { pov ⇒
       pov.game.outoftimePlayer.fold(player.human(p)(pov))(outOfTime(pov.game))
     }
 
-    case AiPlay ⇒ publish(GameRepo game gameId, 10.seconds)(player.ai)
+    case AiPlay ⇒ blockAndPublish(GameRepo game gameId, 10.seconds)(player.ai)
 
     case Abort(playerId) ⇒ handle(playerId) { pov ⇒
       pov.game.abortable ?? finisher(pov.game, _.Aborted)
@@ -78,13 +77,11 @@ private[round] final class Round(
     // exceptionally we don't block nor publish events
     // if the game is abandoned, then nobody is around to see them
     // we can also terminate this actor
-    case Abandon ⇒ fuccess {
-      GameRepo game gameId foreach { gameOption ⇒
-        gameOption filter (_.abandoned) foreach { game ⇒
-          if (game.abortable) finisher(game, _.Aborted)
-          else finisher(game, _.Resign, Some(!game.player.color))
-          self ! PoisonPill
-        }
+    case Abandon ⇒ GameRepo game gameId foreach { gameOption ⇒
+      gameOption filter (_.abandoned) foreach { game ⇒
+        if (game.abortable) finisher(game, _.Aborted)
+        else finisher(game, _.Resign, Some(!game.player.color))
+        self ! PoisonPill
       }
     }
 
@@ -114,8 +111,6 @@ private[round] final class Round(
         }
       }
     }
-
-    case msg ⇒ fufail(s"[round] sequential actor do not process $msg message")
   }
 
   private def outOfTime(game: Game)(p: lila.game.Player) =
@@ -123,20 +118,27 @@ private[round] final class Round(
       chess.InsufficientMatingMaterial(game.toChess.board, _)
     })
 
-  protected def handle(playerId: String)(op: Pov ⇒ Fu[Events]) =
-    publish(GameRepo pov PlayerRef(gameId, playerId))(op)
+  protected def handle(playerId: String)(op: Pov ⇒ Fu[Events]) {
+    blockAndPublish(GameRepo pov PlayerRef(gameId, playerId))(op)
+  }
 
-  protected def handle(color: chess.Color)(op: Pov ⇒ Fu[Events]) =
-    publish(GameRepo pov PovRef(gameId, color))(op)
+  protected def handle(color: chess.Color)(op: Pov ⇒ Fu[Events]) {
+    blockAndPublish(GameRepo pov PovRef(gameId, color))(op)
+  }
 
-  protected def handle[A](op: Game ⇒ Fu[Events]) =
-    publish(GameRepo game gameId)(op)
+  protected def handle[A](op: Game ⇒ Fu[Events]) {
+    blockAndPublish(GameRepo game gameId)(op)
+  }
 
-  private def publish[A](context: Fu[Option[A]], timeout: FiniteDuration = 3.seconds)(op: A ⇒ Fu[Events]) = {
-    context flatten "round not found" flatMap op addEffect {
-      events ⇒ if (events.nonEmpty) socketHub ! Tell(gameId, events)
-    } addFailureEffect {
-      err ⇒ logwarn("[round publish] " + err)
+  private def blockAndPublish[A](context: Fu[Option[A]], timeout: FiniteDuration = 3.seconds)(op: A ⇒ Fu[Events]) {
+    try {
+      val events = {
+        context flatten "[round] not found" flatMap op
+      } await makeTimeout(timeout)
+      if (events.nonEmpty) socketHub ! Tell(gameId, events)
     }
-  }.void
+    catch {
+      case e: lila.common.LilaException ⇒ logwarn("[round] " + e.message)
+    }
+  }
 }
