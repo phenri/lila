@@ -87,9 +87,9 @@ object ApplicationBuild extends Build {
       play.api, RM, PRM, scalastic)
   )
 
-  lazy val analyse = project("analyse", Seq(common, hub, chess, game, user)).settings(
+  lazy val analyse = project("analyse", Seq(common, hub, memo, chess, game, user)).settings(
     libraryDependencies ++= provided(
-      play.api, RM, PRM, spray.caching)
+      play.api, RM, PRM)
   )
 
   lazy val round = project("round", Seq(

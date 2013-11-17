@@ -2,7 +2,7 @@ package lila.analyse
 
 case class Score(centipawns: Int) {
   def pawns: Float = centipawns / 100f
-  def showPawns: String = "%.2f" format pawns
+  def showPawns: String = s"${if(pawns>0) "+" else ""}%.2f" format pawns
 
   def ceiled =
     if (centipawns > Score.CEILING) copy(Score.CEILING)

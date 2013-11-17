@@ -1,9 +1,9 @@
 package lila.ai
 package stockfish
 
-import actorApi._
 import akka.actor.{ Props, Actor, ActorRef, Status, FSM ⇒ AkkaFSM }
 
+import actorApi._
 import lila.analyse.Analysis
 
 private[stockfish] final class ActorFSM(
@@ -37,8 +37,9 @@ private[stockfish] final class ActorFSM(
   when(IsReady) {
     case Event(Out("readyok"), Some(Job(req, _, _))) ⇒ {
       println(req match {
-        case r: PlayReq ⇒ "P " + ("-" * (r.level))
-        case r: AnalReq ⇒ "A " + ("=" * (Config.levelMax + 2))
+        case r: PlayReq         ⇒ "P " + ("-" * (r.level))
+        case _: AnalReq         ⇒ "A " + ("=" * (Config.levelMax + 2))
+        case _: PositionAnalReq ⇒ "A " + ("=" * (Config.levelMax + 2))
       })
       config go req foreach process.write
       goto(Running)

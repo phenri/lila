@@ -15,6 +15,7 @@ final class MailBox(settings: ActorSystem.Settings, config: TypesafeConfig)
   extends UnboundedPriorityMailbox(PriorityGenerator {
     case GetLoad              ⇒ 0
     case PlayReq(_, _, level) ⇒ level
-    case _: AnalReq           ⇒ 10
-    case _                    ⇒ 20
+    case _: PositionAnalReq   ⇒ 50
+    case _: AnalReq           ⇒ 100
+    case _                    ⇒ 200
   })

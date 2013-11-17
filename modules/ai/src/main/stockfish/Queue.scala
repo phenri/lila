@@ -45,7 +45,7 @@ private[ai] final class Queue(config: Config) extends Actor {
       if (req.isStart) sender ! Evaluation.start.some
       else {
         implicit val timeout = makeTimeout(config.analyseMoveTime + extraStockfishTime)
-        (actor ? req) map sender.! await timeout
+        actor ? req map sender.! await timeout
       }
 
     case FullAnalReq(moves, fen) ⇒ {
@@ -60,6 +60,13 @@ private[ai] final class Queue(config: Config) extends Actor {
         mrSender ! {
           results.toList.sequence map { Evaluation.toInfos(_, moves) }
         }
+      }
+    }
+
+    case req: PositionAnalReq ⇒ {
+      implicit val timeout = makeTimeout(config.analysePositionMoveTime + extraStockfishTime)
+      blockAndMeasure {
+        actor ? req mapTo manifest[Option[Evaluation]] map sender.!
       }
     }
   }

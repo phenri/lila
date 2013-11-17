@@ -17,7 +17,6 @@ case class Out(text: String) extends Stream
 case class Err(text: String) extends Stream
 
 sealed trait Req {
-  def moves: List[String]
   def fen: Option[String]
   def analyse: Boolean
 
@@ -43,13 +42,19 @@ case class AnalReq(
 
 case class FullAnalReq(moves: List[String], fen: Option[String])
 
+case class PositionAnalReq(position: String) extends Req {
+  def fen = position.some
+  def analyse = true
+}
+
 case class Job(req: Req, sender: akka.actor.ActorRef, buffer: List[String]) {
 
   def +(str: String) = req.analyse.fold(copy(buffer = str :: buffer), this)
 
   // bestmove xyxy ponder xyxy
   def complete(str: String): Option[Any] = req match {
-    case r: PlayReq ⇒ str split ' ' lift 1
-    case AnalReq(moves, _) ⇒ buffer.headOption map EvaluationParser.apply
+    case _: PlayReq         ⇒ str split ' ' lift 1
+    case _: AnalReq         ⇒ buffer.headOption map EvaluationParser.apply
+    case _: PositionAnalReq ⇒ buffer.headOption map EvaluationParser.apply
   }
 }

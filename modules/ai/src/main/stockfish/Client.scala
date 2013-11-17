@@ -6,6 +6,7 @@ import akka.pattern.ask
 import chess.format.UciMove
 import remote.actorApi._
 
+import lila.analyse.Evaluation
 import lila.analyse.Info
 import lila.hub.actorApi.ai.GetLoad
 
@@ -33,6 +34,16 @@ final class Client(
     case e: Exception ⇒ {
       logwarn(s"[stockfish client] analyse ${e.getMessage}")
       fallback.analyse(uciMoves, initialFen)
+    }
+  }
+
+  def analysePosition(fen: String): Fu[String] = {
+    implicit val timeout = makeTimeout(config.analyseTimeout)
+    dispatcher ? AnalysePosition(fen) mapTo manifest[String]
+  } recoverWith {
+    case e: Exception ⇒ {
+      logwarn(s"[stockfish client] analyse position ${e.getMessage}")
+      fallback.analysePosition(fen)
     }
   }
 

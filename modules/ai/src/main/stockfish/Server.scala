@@ -8,6 +8,7 @@ import akka.pattern.ask
 import chess.format.Forsyth
 
 import actorApi._
+import lila.analyse.Evaluation
 import lila.analyse.Info
 import lila.hub.actorApi.ai.GetLoad
 
@@ -29,6 +30,19 @@ private[ai] final class Server(
     implicit val timeout = makeTimeout(config.analyseTimeout)
     (queue ? FullAnalReq(uciMoves, initialFen map chess960Fen)) mapTo
       manifest[Option[List[Info]]] flatten "[stockfish] analyse failed"
+  }
+
+  def analysePosition(fen: String): Fu[String] = {
+    implicit val timeout = makeTimeout(config.analyseTimeout)
+    (Forsyth <<< fen) match {
+      case Some(game) if game.situation.playable(true) ⇒
+        (queue ? PositionAnalReq(fen)) mapTo
+          manifest[Option[Evaluation]] flatten
+          s"[stockfish] analyse position failed: $fen" map { eval ⇒
+            game.situation.color.fold(eval, -eval).showWithoutLine
+          }
+      case _ ⇒ fufail(s"[stockfish] analyse position: unplayable")
+    }
   }
 
   def load: Fu[Int] = {

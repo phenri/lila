@@ -21,6 +21,7 @@ final class Env(
     val StockfishLocal = config getString "stockfish.local" 
     val StockfishPlayRoute = config getString "stockfish.play.route"
     val StockfishAnalyseRoute = config getString "stockfish.analyse.route"
+    val StockfishAnalysePositionRoute = config getString "stockfish.analyse_position.route"
     val StockfishLoadRoute = config getString "stockfish.load.route"
     val StockfishQueueName = config getString "stockfish.queue.name"
     val StockfishQueueDispatcher = config getString "stockfish.queue.dispatcher"
@@ -35,9 +36,11 @@ final class Env(
     nbThreads = config getInt "stockfish.threads",
     playMaxMoveTime = config duration "stockfish.play.movetime",
     analyseMoveTime = config duration "stockfish.analyse.movetime",
+    analysePositionMoveTime = config duration "stockfish.analyse_position.movetime",
     playTimeout = config duration "stockfish.play.timeout",
     loadTimeout = config duration "stockfish.load.timeout",
     analyseTimeout = config duration "stockfish.analyse.timeout",
+    analysePositionTimeout = config duration "stockfish.analyse_position.timeout",
     debug = config getBoolean "stockfish.debug")
 
   lazy val ai: Ai = (EngineName, IsClient) match {
@@ -57,6 +60,8 @@ final class Env(
       )
       case lila.hub.actorApi.ai.Analyse(uciMoves, fen) ⇒
         ai.analyse(uciMoves, fen) pipeTo sender
+      case lila.hub.actorApi.ai.AnalysePosition(fen) ⇒
+        ai.analysePosition(fen) pipeTo sender
     }
   }), name = ActorName)
 
@@ -68,6 +73,7 @@ final class Env(
         router = stockfish.remote.Router(
           playRoute = StockfishPlayRoute,
           analyseRoute = StockfishAnalyseRoute,
+          analysePositionRoute = StockfishAnalysePositionRoute,
           loadRoute = StockfishLoadRoute) _
         )
       ), name = "stockfish-dispatcher"),

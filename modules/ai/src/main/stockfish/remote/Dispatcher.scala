@@ -44,6 +44,13 @@ private[ai] final class Dispatcher(
       chosen foreach { c ⇒ lastAnalysis = c._1 }
       forward(chosen map (_._2), x, sender)(makeTimeout(config.analyseTimeout))
     }
+
+    case x: AnalysePosition ⇒ {
+      implicit val timeout = makeTimeout(config.analyseTimeout)
+      val chosen = nextConnection(lastPlay)
+      chosen foreach { c ⇒ lastPlay = c._1 }
+      forward(chosen map (_._2), x, sender)(makeTimeout(config.playTimeout))
+    }
   }
 
   private def lessLoadedConnection: Option[ActorRef] =

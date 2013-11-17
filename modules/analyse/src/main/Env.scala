@@ -2,9 +2,9 @@ package lila.analyse
 
 import akka.actor.ActorSelection
 import com.typesafe.config.Config
-import spray.caching.{ LruCache, Cache }
 
 import lila.common.PimpedConfig._
+import lila.memo.AsyncCache
 
 final class Env(
     config: Config,
@@ -16,11 +16,13 @@ final class Env(
   private val CollectionAnalysis = config getString "collection.analysis"
   private val NetDomain = config getString "net.domain"
   private val CachedNbTtl = config duration "cached.nb.ttl"
+  private val CachedPositionMax = config getInt "cached.position.max"
   private val PaginatorMaxPerPage = config getInt "paginator.max_per_page"
 
   private[analyse] lazy val analysisColl = db(CollectionAnalysis)
 
-  lazy val analyser = new Analyser(ai = ai, indexer = indexer)
+  lazy val analyser = new Analyser(ai, indexer)
+  lazy val positionAnalyser = new PositionAnalyser(ai, CachedPositionMax)
 
   lazy val paginator = new PaginatorBuilder(
     cached = cached,
@@ -31,8 +33,10 @@ final class Env(
   lazy val timeChart = TimeChart(nameUser) _
 
   lazy val cached = new {
-    private val cache: Cache[Int] = LruCache(timeToLive = CachedNbTtl)
-    def nbAnalysis: Fu[Int] = cache(true)(AnalysisRepo.count)
+    private val nbAnalysisCache = AsyncCache[Boolean, Int](
+      _ => AnalysisRepo.count,
+      timeToLive = CachedNbTtl)
+    def nbAnalysis: Fu[Int] = nbAnalysisCache(true)
   }
 
   def cli = new lila.common.Cli {

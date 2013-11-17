@@ -48,6 +48,10 @@ private[ai] final class Connection(
       "uciMoves" -> uciMoves.mkString(" "),
       "initialFen" -> fen
     ).get() map (_.body) pipeTo sender
+
+    case AnalysePosition(fen) ⇒ WS.url(router.analysePosition).withQueryString(
+      "fen" -> fen
+    ).get() map (_.body) pipeTo sender
   }
 
 }

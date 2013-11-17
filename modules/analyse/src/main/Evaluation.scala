@@ -9,6 +9,17 @@ case class Evaluation(
 
   def checkMate = mate == Some(0)
 
+  def unary_- = copy(
+    score = score map (-_),
+    mate = mate map (-_),
+    line = line)
+
+  def showWithoutLine = (score, mate) match {
+    case (_, Some(m)) ⇒ s"#$m"
+    case (Some(s), _) ⇒ s.showPawns
+    case _            ⇒ "?"
+  }
+
   override def toString = s"Evaluation ${score.fold("?")(_.showPawns)} ${mate | 0} ${line.mkString(" ")}"
 }
 

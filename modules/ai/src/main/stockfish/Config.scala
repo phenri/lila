@@ -11,8 +11,10 @@ private[ai] case class Config(
     nbThreads: Int,
     playMaxMoveTime: FiniteDuration,
     analyseMoveTime: FiniteDuration,
+    analysePositionMoveTime: FiniteDuration,
     playTimeout: FiniteDuration,
     analyseTimeout: FiniteDuration,
+    analysePositionTimeout: FiniteDuration,
     loadTimeout: FiniteDuration,
     debug: Boolean) {
 
@@ -51,6 +53,11 @@ private[ai] case class Config(
       setoption("Skill Level", skillMax),
       setoption("UCI_Chess960", r.chess960),
       setoption("OwnBook", true))
+    case r: PositionAnalReq ⇒ List(
+      setoption("Uci_AnalyseMode", true),
+      setoption("Skill Level", skillMax),
+      setoption("UCI_Chess960", true),
+      setoption("OwnBook", true))
   }
 
   def go(req: Req): List[String] = req match {
@@ -60,6 +67,9 @@ private[ai] case class Config(
     case r: AnalReq ⇒ List(
       position(r.fen, r.moves),
       "go movetime %d".format(analyseMoveTime.toMillis))
+    case r: PositionAnalReq ⇒ List(
+      position(r.fen, Nil),
+      "go movetime %d".format(analysePositionMoveTime.toMillis))
   }
 
   private def position(fen: Option[String], moves: List[String]) =

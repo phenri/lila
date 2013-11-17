@@ -23,6 +23,13 @@ object Analyse extends LilaController {
   private def bookmarkApi = Env.bookmark.api
   private lazy val timeChart = TimeChart(Env.user.usernameOrAnonymous) _
 
+  def position(fenStr: String) = Open { implicit ctx ⇒
+    java.net.URLDecoder.decode(fenStr, "UTF-8").trim.some.filter(_.nonEmpty) match {
+      case Some(fen) ⇒ env.positionAnalyser(fen) map { Ok(_) }
+      case None      ⇒ fuccess(BadRequest)
+    }
+  }
+
   def computer(id: String, color: String) = Auth { implicit ctx ⇒
     me ⇒
       env.analyser.getOrGenerate(id, me.id, isGranted(_.MarkEngine)) effectFold (

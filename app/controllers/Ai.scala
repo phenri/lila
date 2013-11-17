@@ -47,6 +47,18 @@ object Ai extends LilaController {
     }
   }
 
+  def analysePosition(fen: String) = Action.async { req ⇒
+    IfServer {
+      stockfishServer.analysePosition(fen) fold (
+        err ⇒ {
+          logwarn("[ai] stochfish server analyse position: " + err)
+          InternalServerError(err.toString)
+        },
+        eval ⇒ Ok(eval.toString)
+      )
+    }
+  }
+
   private def IfServer(result: ⇒ Fu[SimpleResult]) =
     isServer.fold(result, fuccess(BadRequest("Not an AI server")))
 }

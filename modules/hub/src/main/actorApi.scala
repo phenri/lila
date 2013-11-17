@@ -111,6 +111,7 @@ package forum {
 package ai {
   case object GetLoad
   case class Analyse(uciMoves: List[String], initialFen: Option[String])
+  case class AnalysePosition(fen: String)
 }
 
 package monitor {
