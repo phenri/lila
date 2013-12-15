@@ -29,7 +29,8 @@ object ApplicationBuild extends Build {
     message, notification, i18n, game, bookmark, search,
     gameSearch, timeline, forum, forumSearch, team, teamSearch,
     ai, analyse, mod, monitor, site, round, lobby, setup,
-    importer, tournament, relation, report, pref, simulation)
+    importer, tournament, relation, report, pref, simulation,
+    roadmap)
 
   lazy val moduleRefs = modules map projectToRef
   lazy val moduleCPDeps = moduleRefs map { new sbt.ClasspathDependency(_, None) }
@@ -75,6 +76,11 @@ object ApplicationBuild extends Build {
   lazy val user = project("user", Seq(common, memo, db, hub, chess)).settings(
     libraryDependencies ++= provided(
       play.api, play.test, RM, PRM, hasher)
+  )
+
+  lazy val roadmap = project("roadmap", Seq(common, db, user)).settings(
+    libraryDependencies ++= provided(
+      play.api, RM, PRM)
   )
 
   lazy val game = project("game", Seq(common, memo, db, hub, user, chess)).settings(
