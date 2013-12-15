@@ -4,6 +4,9 @@ GET   /lobby/socket                    controllers.Lobby.socket
 GET   /timeline                        controllers.Lobby.timeline
 GET   /timeline/more                   controllers.Lobby.timelineMore
 
+# Roadmap
+GET   /roadmap                         controllers.Roadmap.index
+
 # TV
 GET   /tv                              controllers.Tv.index
 
