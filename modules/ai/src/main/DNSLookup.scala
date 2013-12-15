@@ -15,8 +15,8 @@ private[ai] object DNSLookup {
 
   private def lookupInFuture(url: String): Fu[AiHost] = Future { 
     val host = new java.net.URL(url).getHost
-    lookup(host).headOption map { AiHost(host, _) }
-  } flatten s"Can't lookup $url IP address"
+    AiHost(host, lookup(host).headOption | "127.0.0.1")
+  } 
 
   // based on http://ujihisa.blogspot.fr/2012/09/dns-lookup-in-scala.html
   private def lookup(host: String): List[String] = {
